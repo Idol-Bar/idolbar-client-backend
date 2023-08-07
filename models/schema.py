@@ -52,4 +52,20 @@ class LoginSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class PhoneLoginSchema(BaseModel):
+    verificationID: str
+    code: str
+
+    class Config:
+        orm_mode = True
+
+class RegisterPhoneSchema(BaseModel):
+    username: str
+    birthday: str
+    state: str
+    division: str
+    shop:str
+
+    class Config:
+        orm_mode = True
 ##MemberSchema

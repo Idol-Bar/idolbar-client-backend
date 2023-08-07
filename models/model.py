@@ -18,22 +18,25 @@ import datetime
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "enduser"
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    username = Column(String, unique=False, nullable=True)
+    birthday = Column(String, nullable=True)
     createdate = Column(DateTime, default=datetime.datetime.now)
     postImage = Column(ARRAY(JSON), nullable=True)
+    info = Column(ARRAY(JSON), nullable=True)
+    phoneno = Column(String, unique=True, nullable=False)
+    status = Column(String, unique=True, nullable=False)
     active = Column(Boolean, unique=False, default=True)
-    role = relationship("Role", back_populates="user", cascade="all,delete", lazy="dynamic")
+    tier = relationship("Tier", back_populates="enduser", cascade="all,delete", lazy="dynamic")
 
 class UserInDB(User):
     password: Column(String, nullable=False)
 
 
-class Role(Base):
-    __tablename__ = "role"
+class Tier(Base):
+    __tablename__ = "tier"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    user = relationship("User", back_populates="role", cascade="all,delete")
+    user_id = Column(Integer, ForeignKey("enduser.id"))
+    enduser = relationship("User", back_populates="tier", cascade="all,delete")

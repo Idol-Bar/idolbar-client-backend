@@ -26,8 +26,8 @@ async def AuthHandler(
     logger.info(user.active)
     if not user.active:
         raise HTTPException(status_code=401, detail="User banned")
-    if data["role"] != "admin" and data["role"] != "agent":
-        raise HTTPException(status_code=403, detail="Operation not permitted")
+    #if data["role"] != "admin" and data["role"] != "agent":
+    #    raise HTTPException(status_code=403, detail="Operation not permitted")
 
 
 async def get_current_user(

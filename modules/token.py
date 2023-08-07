@@ -52,6 +52,7 @@ class AuthToken:
                 status_code=401, detail="Scope for the token is invalid"
             )
         except jwt.ExpiredSignatureError:
+            print("Token Expire")
             raise HTTPException(status_code=401, detail="Token expired")
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail="Invalid token")
