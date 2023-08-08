@@ -4,7 +4,8 @@ from fastapi.responses import JSONResponse
 from modules.token import AuthToken
 from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser
 from fastapi.logger import logger
-from models.model import User,Tier
+from models.model import Tier
+from models.model import EndUser as User
 from .database import get_db
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder

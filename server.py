@@ -29,7 +29,7 @@ def create_app():
     from modules.dependency import  AuthHandler
     #import models.model as app_model
     import handlers.database as app_model
-    from models.model import User
+    from models.model import EndUser as User
 
     app_model.Base.metadata.create_all(bind=engine)
     logging.basicConfig(

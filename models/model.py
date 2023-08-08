@@ -17,7 +17,8 @@ from handlers.database import Base
 import datetime
 
 
-class User(Base):
+
+class EndUser(Base):
     __tablename__ = "enduser"
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=False, nullable=True)
@@ -29,9 +30,8 @@ class User(Base):
     status = Column(String, unique=True, nullable=False)
     active = Column(Boolean, unique=False, default=True)
     tier = relationship("Tier", back_populates="enduser", cascade="all,delete", lazy="dynamic")
-
-class UserInDB(User):
-    password: Column(String, nullable=False)
+    point_id = Column(Integer, ForeignKey('point.id'))
+    point = relationship("Point", back_populates="owner")
 
 
 class Tier(Base):
@@ -39,4 +39,25 @@ class Tier(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("enduser.id"))
-    enduser = relationship("User", back_populates="tier", cascade="all,delete")
+    enduser = relationship("EndUser", back_populates="tier", cascade="all,delete")
+
+
+class Point(Base):
+    __tablename__ = 'point'
+    id = Column(Integer, primary_key=True)
+    unit = Column(Integer, nullable=False,default=1)
+    owner = relationship("EndUser", uselist=False, back_populates="point")
+    transitions = relationship("Transition", back_populates="point")
+
+class Transition(Base):
+    __tablename__ = 'transitions'
+    id = Column(Integer, primary_key=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    status = Column(String, nullable=False)
+    point_id = Column(Integer, ForeignKey('point.id'))
+    point = relationship("Point", back_populates="transitions")
+
+
+class UserInDB(EndUser):
+    password: Column(String, nullable=False)
+

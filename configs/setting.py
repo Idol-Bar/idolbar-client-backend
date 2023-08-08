@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     _dbport = "5432"
     _DATABASE_URL = f"postgresql://{_dbuser}:{_dbpass }@{_dbhost}:{_dbport}/idolbar"
     _host = "0.0.0.0"
-    _port = 8000
+    _port = 8001
     _isdebug = True
     _isreload = True
     SECRET_KEY: str = "idolbarAdmin2023!@#$#@!"

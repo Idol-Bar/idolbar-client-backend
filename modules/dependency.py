@@ -4,7 +4,8 @@ from modules.token import AuthToken
 from handlers.database import get_db
 from sqlalchemy.orm import Session
 from fastapi.logger import logger
-from models.model import User
+#from models.model import User
+from models.model import EndUser as User
 security = HTTPBearer()
 auth_handler = AuthToken()
 

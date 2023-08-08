@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from configs.setting import Settings
 
 from handlers.database import get_db
-from models.model import User
+from models.model import EndUser as User
 from sqlalchemy.orm import Session
 
 
