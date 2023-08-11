@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 
 from modules.token import AuthToken
-from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser
+from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser,ProfileSchema
 from fastapi.logger import logger
 from models.model import Tier
 from models.model import EndUser as User
@@ -31,3 +31,10 @@ async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db)
     db.commit()
     db.refresh(db_user)
     return {"user":db_user}
+
+@router.get("/me", tags=["member"], response_model=ProfileSchema)
+def get_profile(db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    member = db.get(User, current_user["id"])
+    if not member:
+        raise HTTPException(status_code=404, detail="User ID not found.")
+    return member

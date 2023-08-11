@@ -68,4 +68,16 @@ class RegisterPhoneSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ProfileSchema(BaseModel):
+    id:int
+    username: str
+    birthday: str
+    #state: str
+    #division: str
+    #shop:str
+
+    class Config:
+        orm_mode = True
 ##MemberSchema
