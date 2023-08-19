@@ -80,4 +80,11 @@ class ProfileSchema(BaseModel):
 
     class Config:
         orm_mode = True
-##MemberSchema
+##Point Schema
+
+class PayPointSchema(OrmBase):
+    unit: int
+
+class SharePointSchema(OrmBase):
+    userId: int
+    unit: int
