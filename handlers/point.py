@@ -35,7 +35,7 @@ async def pay_point(
             point.owner = None
             point.transitions.append(new_transition)
         db.commit()
-        return  {"status":"You send to Admin","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
+        return  {"status":f"You send {point_info.unit} points to Admin","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
     return HTTPException(status_code=400, detail="Not Enought Amount")
 
 
@@ -58,7 +58,7 @@ async def share_point(
             point.owner = receive
             point.transitions.append(new_transition)
         db.commit()
-        return  {"status":f"You send to {receive.username}","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
+        return  {"status":f"You send  {point_info.unit} points to {receive.username}","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
     return HTTPException(status_code=400, detail="Not Enought Amount")
 
     

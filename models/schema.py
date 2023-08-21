@@ -83,8 +83,16 @@ class ProfileSchema(BaseModel):
 ##Point Schema
 
 class PayPointSchema(OrmBase):
+    id: Optional[int]
     unit: int
 
+    class Config:
+        orm_mode = True
+
 class SharePointSchema(OrmBase):
+    id: Optional[int]
     userId: int
     unit: int
+
+    class Config:
+        orm_mode = True
