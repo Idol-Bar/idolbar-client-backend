@@ -6,6 +6,7 @@ from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhone
 from fastapi.logger import logger
 from models.model import Tier
 from models.model import EndUser as User
+from models.model import Point
 from .database import get_db
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
@@ -36,6 +37,16 @@ async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db)
 @router.get("/me", tags=["member"], response_model=ProfileSchema)
 def get_profile(db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
     member = db.get(User, current_user["id"])
+    owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     if not member:
         raise HTTPException(status_code=404, detail="User ID not found.")
     return member
+
+@router.get("/wallet", tags=["member"])
+def get_profile(db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    member = db.get(User, current_user["id"])
+    owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    if not member:
+        raise HTTPException(status_code=404, detail="User ID not found.")
+    unit = len(owner_points_count) if owner_points_count is not None else 0
+    return {"unit":unit}

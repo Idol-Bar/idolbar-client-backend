@@ -20,9 +20,9 @@ auth_handler = AuthToken()
 
 @router.post("/paypoints", tags=["point"])
 async def pay_point(
-    request: Request, point_info: PayPointSchema, db: Session = Depends(get_db)#, current_user: CurrentUser = Depends(get_current_user)
+    request: Request, point_info: PayPointSchema, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    current_user = {"id":1}
+    #current_user = {"id":1}
     logger.info(point_info.dict())
     owner = db.query(EndUser).get(current_user["id"])
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
@@ -41,9 +41,9 @@ async def pay_point(
 
 @router.post("/sharepoints", tags=["point"])
 async def share_point(
-    request: Request, point_info: SharePointSchema, db: Session = Depends(get_db)#, current_user: CurrentUser = Depends(get_current_user)
+    request: Request, point_info: SharePointSchema, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    current_user = {"id":1}
+    #current_user = {"id":1}
     logger.info(point_info.dict())
     owner = db.query(EndUser).get(current_user["id"])
     receive = db.query(EndUser).get(point_info.userId)
