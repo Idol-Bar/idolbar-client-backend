@@ -14,6 +14,6 @@ class Settings(BaseSettings):
     _isreload = True
     SECRET_KEY: str = "idolbarAdmin2023!@#$#@!"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 6000
     FILE_SESSION_TYPE = "memcached"
     FILE_SECRET_KEY = "idolbarAdmin2023!@#$"

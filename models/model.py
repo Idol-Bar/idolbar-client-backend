@@ -7,6 +7,8 @@ from sqlalchemy import (
     BigInteger,
     String,
     DateTime,
+    Date,
+    Time,
     ForeignKey,
     JSON,
     ARRAY,
@@ -17,7 +19,32 @@ from handlers.database import Base
 import datetime
 
 
+class BannerModel(Base):
+    __tablename__ = "banners"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String,nullable=False)
+    description = Column(String, nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
 
+class PostModel(Base):
+    __tablename__ = "posts"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String,nullable=False)
+    category = Column(String,nullable=False)
+    description = Column(String, nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    publishdate = Column(DateTime, default=datetime.datetime.now)
+    isnoti = Column(Boolean, unique=False, default=False)
+    
+class CategoryModel(Base):
+    __tablename__ = "category"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String,nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    
 class EndUser(Base):
     __tablename__ = "enduser"
     id = Column(Integer, primary_key=True, index=True)
@@ -88,3 +115,27 @@ class PointLogs(Base):
     createdate = Column(DateTime, default=datetime.datetime.now)
     status = Column(String, nullable=False)
     info = Column(ARRAY(JSON), nullable=True)
+
+
+class Reservation(Base):
+    __tablename__ = 'reservation'
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=False, nullable=True)
+    phoneno = Column(String, unique=False, nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    reservedate = Column(Date, nullable=False)
+    reservetime = Column(Time, nullable=False)
+    description = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    active = Column(Boolean, unique=False, default=True)
+    tables = relationship('Tables', back_populates='reservation', cascade='all, delete-orphan')
+
+class Tables(Base):
+    __tablename__ = 'tables'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=False, nullable=True)
+    shop = Column(String, nullable=False)
+    reservation_id = Column(Integer, ForeignKey('reservation.id'))  # Define a foreign key
+    reservedate = Column(Date, nullable=False)
+    reservation = relationship('Reservation', back_populates='tables')
+    createdate = Column(DateTime, default=datetime.datetime.now)

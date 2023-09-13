@@ -26,7 +26,7 @@ async def get_transition(
     #members = db.query(User).all()
     db_user = db.query(User).get(current_user["id"])
     username = db_user.username
-    #username = "ppk"
+    username = "ppk"
     if not db_user:
         raise HTTPException(status_code=404, detail="News ID not found.")
     count = db.query(PointLogs).count()

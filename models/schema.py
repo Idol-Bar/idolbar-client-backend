@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date,time
 from uuid import uuid4, UUID
 from typing import List, Optional, Any
 from pydantic import BaseModel, validator,Field
@@ -94,5 +94,63 @@ class SharePointSchema(OrmBase):
     userId: int
     unit: int
 
+    class Config:
+        orm_mode = True
+### Reservation
+class TablesSchema(OrmBase):
+    name: str
+    reservedate: date
+    createdate: datetime
+    reservation_id:int
+
+class ReserveSchema(OrmBase):
+    username: str
+    phoneno: str
+    createdate: datetime
+    reservedate: date
+    reservetime: time
+    description: str
+    status: bool
+    active: Optional[bool] = False
+    tables: List[TablesSchema]  = []
+
+    class Config:
+        orm_mode = True
+
+class CreateReserveSchema(OrmBase):
+    id: Optional[int]
+    # username: str
+    # phoneno: str
+    shop: str
+    reservedate: date
+    reservetime: time
+    description: str
+    status: Optional[bool] = True
+    active: Optional[bool] = True
+    tables: List
+
+    class Config:
+        orm_mode = True
+
+class CreateReserveSchemaRequest(BaseModel):
+    reservation: CreateReserveSchema
+
+class GetAppCategorySchema(OrmBase):
+    id: int
+    name: str
+    postImage: Optional[List] = []
+    createdate: datetime
+    class Config:
+        orm_mode = True
+
+
+class GetAppPostSchema(OrmBase):
+    id: Optional[int]
+    category: str
+    title: str
+    description: str
+    createdate: datetime
+    publishdate: datetime
+    postImage: Optional[List] = []
     class Config:
         orm_mode = True
