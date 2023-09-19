@@ -139,3 +139,29 @@ class Tables(Base):
     reservedate = Column(Date, nullable=False)
     reservation = relationship('Reservation', back_populates='tables')
     createdate = Column(DateTime, default=datetime.datetime.now)
+
+
+class FoodCategoryModel(Base):
+    __tablename__ = "foodcategory"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String,nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    foods = relationship('FoodModel', back_populates='category')
+
+class FoodModel(Base):
+    __tablename__ = "foods"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String,nullable=False)
+    code = Column(String,nullable=False)
+    description = Column(String, nullable=False)
+    instock = Column(Boolean, unique=False, default=False)
+    bestsell = Column(Boolean, unique=False, default=False)
+    todayspecial = Column(Boolean, unique=False, default=False)
+    discount = Column(Integer, unique=False, default=False)
+    price = Column(Integer, unique=False, default=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    category_id = Column(Integer, ForeignKey('foodcategory.id'), nullable=False)
+    category = relationship('FoodCategoryModel', back_populates='foods')
+    

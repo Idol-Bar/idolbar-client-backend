@@ -18,6 +18,12 @@ class OrmBase(BaseModel):
         orm_mode = True
 
 
+class MetaSchema(OrmBase):
+    id: Optional[int] =  1
+    total_pages: int
+    page: Optional[int] =  1
+
+
 class RoleSchema(OrmBase):
     name: str
 
@@ -154,3 +160,38 @@ class GetAppPostSchema(OrmBase):
     postImage: Optional[List] = []
     class Config:
         orm_mode = True
+
+
+###Food Category
+class GetFoodCategorySchema(OrmBase):
+    id: int
+    name: str
+    postImage: Optional[List] = []
+    createdate: datetime
+    class Config:
+        orm_mode = True
+
+class FoodCategorySchemaWithMeta(BaseModel):
+    foodCategory: List[GetFoodCategorySchema] = []
+    meta : MetaSchema
+
+class GetFoodSchema(OrmBase):
+    id: Optional[int]
+    name: str
+    code: str
+    description: str
+    instock: bool
+    bestsell: bool
+    todayspecial: bool
+    discount: int
+    price: int
+    createdate: datetime
+    postImage: Optional[List] = []
+    category: GetFoodCategorySchema  = []
+
+    class Config:
+        orm_mode = True
+
+class FoodSchemaWithMeta(BaseModel):
+    food: List[GetFoodSchema] = []
+    meta : MetaSchema

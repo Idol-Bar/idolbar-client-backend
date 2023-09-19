@@ -24,7 +24,7 @@ def create_app():
     )
 
     from modules.dependency import AuthHandler
-    from handlers import login, auth, upload,member,point,transition,reservation,banner,category,post
+    from handlers import login, auth, upload,member,point,transition,reservation,banner,category,post,food
     from handlers.database import SessionLocal, engine
     from modules.dependency import  AuthHandler
     #import models.model as app_model
@@ -47,6 +47,7 @@ def create_app():
     app.include_router(banner.router,dependencies=[Depends(AuthHandler)])
     app.include_router(category.router,dependencies=[Depends(AuthHandler)])
     app.include_router(post.router,dependencies=[Depends(AuthHandler)])
+    app.include_router(food.router,dependencies=[Depends(AuthHandler)])
     @app.on_event("startup")
     async def startup_event():
         logger.info("Database Startup Complete")
