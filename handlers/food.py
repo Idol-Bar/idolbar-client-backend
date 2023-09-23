@@ -38,3 +38,13 @@ page: int = 1 , per_page: int=10,
     meta_data =  pagination(page,per_page,count)
     post_data = db.query(FoodModel).order_by(desc(FoodModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"food":post_data,"meta":meta_data}
+
+@router.get("/foods/filter/{category}", tags=["food"],response_model=FoodSchemaWithMeta)
+async def get_food_bycategory(
+    category: str,page: int = 1 , per_page: int=10,
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    count = db.query(FoodModel).join(FoodCategoryModel).filter(FoodCategoryModel.name == category).count()
+    meta_data =  pagination(page,per_page,count)
+    food_data = db.query(FoodModel).join(FoodCategoryModel).filter(FoodCategoryModel.name == category).order_by(desc(FoodModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
+    return {"food":food_data,"meta":meta_data}
