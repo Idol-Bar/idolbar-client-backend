@@ -13,7 +13,8 @@ from sqlalchemy import (
     JSON,
     ARRAY,
     Boolean,
-    BigInteger
+    BigInteger,
+    Enum
 )
 from handlers.database import Base
 import datetime
@@ -164,4 +165,43 @@ class FoodModel(Base):
     createdate = Column(DateTime, default=datetime.datetime.now)
     category_id = Column(Integer, ForeignKey('foodcategory.id'), nullable=False)
     category = relationship('FoodCategoryModel', back_populates='foods')
+
+class Cart(Base):
+    __tablename__ = 'carts'
+    id = Column(Integer, primary_key=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    status = Column(String,nullable=False)
+    user_id = Column(Integer, ForeignKey("enduser.id"))
+    #enduser = relationship("EndUser", back_populates="cart", cascade="all,delete")
+    cart_items = relationship('CartItem', back_populates='cart')
+
+class CartItem(Base):
+    __tablename__ = 'cart_items'
+    id = Column(Integer, primary_key=True)
+    quantity = Column(Integer, nullable=False)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    food_id = Column(Integer, ForeignKey('foods.id'))
+    food = relationship('FoodModel')
+    cart_id = Column(Integer, ForeignKey('carts.id'))
+    cart = relationship('Cart', back_populates='cart_items')
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+    #status = Column(Enum('Processing', 'Shipped', 'Delivered', name='order_status'))
+    user_id = Column(Integer, ForeignKey("enduser.id"))
+    #enduser = relationship("EndUser", back_populates="enduser", cascade="all,delete")
+    order_items = relationship('OrderItem', back_populates='order')
+
+class OrderItem(Base):
+    __tablename__ = 'order_items'
+    id = Column(Integer, primary_key=True)
+    
+    price = Column(Float, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    food_id = Column(Integer, ForeignKey('foods.id'))
+    food = relationship('FoodModel')
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    order = relationship('Order', back_populates='order_items')
     

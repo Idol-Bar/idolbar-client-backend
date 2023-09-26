@@ -195,3 +195,12 @@ class GetFoodSchema(OrmBase):
 class FoodSchemaWithMeta(BaseModel):
     food: List[GetFoodSchema] = []
     meta : MetaSchema
+
+
+##Cart 
+class AddToCart(BaseModel):
+    food_id: int
+    quantity: int
+
+    class Config:
+        orm_mode = True

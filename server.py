@@ -10,7 +10,7 @@ import datetime
 from firebase_admin import credentials
 import firebase_admin
 def create_app():
-    app = FastAPI()
+    app = FastAPI(title="Idolbar",description="NobleTech",)
     cred = credentials.Certificate("idolbar-66fe5-firebase-adminsdk-xtsop-49667f9365.json")
     firebase_app = firebase_admin.initialize_app(cred)
     auth_handler = AuthToken()
@@ -24,7 +24,7 @@ def create_app():
     )
 
     from modules.dependency import AuthHandler
-    from handlers import login, auth, upload,member,point,transition,reservation,banner,category,post,food
+    from handlers import login, auth, upload,member,point,transition,reservation,banner,category,post,food,cart
     from handlers.database import SessionLocal, engine
     from modules.dependency import  AuthHandler
     #import models.model as app_model
@@ -48,6 +48,7 @@ def create_app():
     app.include_router(category.router,dependencies=[Depends(AuthHandler)])
     app.include_router(post.router,dependencies=[Depends(AuthHandler)])
     app.include_router(food.router,dependencies=[Depends(AuthHandler)])
+    app.include_router(cart.router,dependencies=[Depends(AuthHandler)])
     @app.on_event("startup")
     async def startup_event():
         logger.info("Database Startup Complete")
