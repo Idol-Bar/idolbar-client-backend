@@ -29,7 +29,7 @@ async def get_carts(
         raise HTTPException(status_code=404, detail="Open cart not found for this customer")
     cart_items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     cart_item_list = [ {"product_id": item.food_id,"product_name": item.food.name,"quantity": item.quantity,"price":item.food.price} for item in cart_items]
-    return {"cart":cart_item_list}
+    return {"cart":cart_items}
 
     
 @router.post("/carts", tags=["cart"])

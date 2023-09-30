@@ -204,3 +204,8 @@ class AddToCart(BaseModel):
 
     class Config:
         orm_mode = True
+
+class CartList(BaseModel):
+    price:int
+    quantity:int
+    food: GetFoodSchema
