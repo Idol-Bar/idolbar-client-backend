@@ -4,6 +4,7 @@ from fastapi.logger import logger
 from models.schema import (
     CurrentUser,
     AddToCart,
+ 
 )
 from typing import List, Dict
 from .database import get_db
@@ -33,11 +34,10 @@ async def get_carts(
 
     
 @router.post("/carts", tags=["cart"])
-async def add_food(
+async def add_cart(
     request: Request, data: AddToCart, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     logger.info(data)
-    print(current_user)
     user = db.query(EndUser).get(current_user["id"])
     food = db.query(FoodModel).get(data.food_id)
     if not user or not food:
@@ -55,3 +55,55 @@ async def add_food(
         db.add(cart_item)
     db.commit()
     return {"cart":data}
+
+@router.delete("/carts/{_id}", tags=["cart"])
+async def remove_cart(_id: int, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    user = db.query(EndUser).get(current_user["id"])
+    if not user:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
+    if not cart:
+        raise HTTPException(status_code=404, detail="Open cart not found for this customer")
+    cart_item = db.get(CartItem, _id)
+    db.delete(cart_item)
+    db.commit()
+    return {"message": "CartItem has been deleted succesfully"}
+
+@router.put("/carts/add/{_id}", tags=["cart"])
+async def add_cart_item(
+    _id: int,db: Session = Depends(get_db),current_user: CurrentUser = Depends(get_current_user)
+):
+    user = db.query(EndUser).get(current_user["id"])
+    if not user:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
+    if not cart:
+        raise HTTPException(status_code=404, detail="Open cart not found for this customer")
+    cart_item = db.query(CartItem).get(_id)
+    if not cart_item:
+            raise HTTPException(status_code=404, detail="Product not found in the cart")
+    cart_item.quantity += 1
+    db.commit()
+    db.refresh(cart_item)
+    cart_item.food = db.query(FoodModel).filter(FoodModel.id == cart_item.food_id).first()
+    return {"cart":cart_item}
+
+
+@router.put("/carts/remove/{_id}", tags=["cart"])
+async def remove_cart_item(
+    _id: int,db: Session = Depends(get_db),current_user: CurrentUser = Depends(get_current_user),
+):
+    user = db.query(EndUser).get(current_user["id"])
+    if not user:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
+    if not cart:
+        raise HTTPException(status_code=404, detail="Open cart not found for this customer")
+    cart_item = db.query(CartItem).get(_id)
+    if not cart_item:
+            raise HTTPException(status_code=404, detail="Product not found in the cart")
+    cart_item.quantity -= 1
+    db.commit()
+    db.refresh(cart_item)
+    cart_item.food = db.query(FoodModel).filter(FoodModel.id == cart_item.food_id).first()
+    return {"cart":cart_item}

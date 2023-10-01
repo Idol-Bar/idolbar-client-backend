@@ -208,4 +208,7 @@ class AddToCart(BaseModel):
 class CartList(BaseModel):
     price:int
     quantity:int
+    cart_id:int
+    createdate: datetime
+    food_id:int
     food: GetFoodSchema
