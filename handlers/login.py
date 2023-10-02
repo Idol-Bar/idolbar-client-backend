@@ -87,6 +87,10 @@ async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends
         db.add(db_user)
         db.add(tier)
         db.commit()
+    else:
+        user.code = code
+        db.commit()
+        db.refresh(user)
     logger.info("Sending SMS")
     result = await send_sms(phone=user_details.phone,message=code)
     logger.info(result)
