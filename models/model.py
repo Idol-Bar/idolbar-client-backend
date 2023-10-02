@@ -58,6 +58,7 @@ class EndUser(Base):
     status = Column(String, nullable=False)
     active = Column(Boolean, unique=False, default=True)
     tier = relationship("Tier", back_populates="enduser", cascade="all,delete", lazy="dynamic")
+    code = Column(String,nullable=True)
     #point_id = Column(Integer, ForeignKey('point.id'))
     point = relationship("Point", back_populates="owner")
 

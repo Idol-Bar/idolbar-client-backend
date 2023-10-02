@@ -19,6 +19,21 @@ router = APIRouter()
 auth_handler = AuthToken()
 
 
+@router.put("/update-info", tags=["auth"])
+async def update_info(data: RegisterPhoneSchema,db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    db_user = db.query(User).get(current_user["id"])
+    if not db_user:
+        raise HTTPException(status_code=404, detail="News ID not found.")
+    db_user.username =  data.username
+    db_user.birthday =  data.birthday
+    db_user.state =  data.state
+    db_user.division =  data.division
+    db_user.shop = data.shop
+    db_user.status = "CONFIRM"
+    db.commit()
+    db.refresh(db_user)
+    return {"user":db_user}
+
 @router.put("/phone-register", tags=["member"])
 async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
     db_user = db.query(User).get(current_user["id"])
@@ -29,7 +44,7 @@ async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db)
     db_user.state =  data.state
     db_user.division =  data.division
     db_user.shop = data.shop
-    db_user.status = True
+    db_user.status = "CONFIRM"
     db.commit()
     db.refresh(db_user)
     return {"user":db_user}

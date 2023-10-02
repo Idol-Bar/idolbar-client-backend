@@ -50,6 +50,20 @@ class CurrentUser(BaseModel):
     class Config:
         orm_mode = True
 
+###SMS POOH
+class PhoneVerifySchema(BaseModel):
+    phone: str
+    code: str
+
+    class Config:
+        orm_mode = True
+
+class PhoneRegisterSchema(BaseModel):
+    phone: str
+
+    class Config:
+        orm_mode = True
+
 
 class LoginSchema(BaseModel):
     username: str
