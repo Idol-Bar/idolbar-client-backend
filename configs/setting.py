@@ -17,3 +17,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 6000
     FILE_SESSION_TYPE = "memcached"
     FILE_SECRET_KEY = "idolbarAdmin2023!@#$"
+    smspoh_host = "https://smspoh.com/api/"
+
+
+class SMSPOH(BaseSettings):
+    host = "https://smspoh.com/api"
+    token = "1XPZ8f7pXFjW2Vey-_3yGIEcN5VPcj9nhot0JJX9DgtDTbBkF8EZhIvw1QctH8sM"
+
+sms_api = SMSPOH()

@@ -12,7 +12,7 @@ from fastapi.encoders import jsonable_encoder
 import logging
 from firebase_admin import auth as firebase_auth
 import random
-
+from modules.sms_gateway import send_sms
 router = APIRouter()
 
 auth_handler = AuthToken()
@@ -71,7 +71,7 @@ def login(user_details: PhoneLoginSchema, db: Session = Depends(get_db)):
 
 
 @router.post("/register", tags=["auth"])
-def sms_register(user_details: PhoneRegisterSchema, db: Session = Depends(get_db)):
+async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends(get_db)):
     logger.info(user_details)
     user = db.query(User).filter(User.phoneno == user_details.phone).first()
     code = str(random.randint(100000, 999999))
@@ -88,6 +88,8 @@ def sms_register(user_details: PhoneRegisterSchema, db: Session = Depends(get_db
         db.add(tier)
         db.commit()
     logger.info("Sending SMS")
+    result = await send_sms(phone=user_details.phone,message=code)
+    logger.info(result)
     return {"detail": "User registered. Six-digit verification code sent"}
         
     
