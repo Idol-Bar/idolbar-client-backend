@@ -190,9 +190,12 @@ class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True)
     createdate = Column(DateTime, default=datetime.datetime.now)
-    #status = Column(Enum('Processing', 'Shipped', 'Delivered', name='order_status'))
+    payment = Column(String,nullable=False)
+    status = Column(String,nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    description = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey("enduser.id"))
-    #enduser = relationship("EndUser", back_populates="enduser", cascade="all,delete")
+    enduser = relationship("EndUser")
     order_items = relationship('OrderItem', back_populates='order')
 
 class OrderItem(Base):
@@ -205,4 +208,19 @@ class OrderItem(Base):
     food = relationship('FoodModel')
     order_id = Column(Integer, ForeignKey('orders.id'))
     order = relationship('Order', back_populates='order_items')
-    
+
+   
+class NotiModel(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    tier = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+
+class FaqModel(Base):
+    __tablename__ = "faq"
+    id = Column(Integer, primary_key=True, index=True)
+    question = Column(String,nullable=False)
+    answer = Column(String,nullable=False)
+    createdate = Column(DateTime, default=datetime.datetime.now)

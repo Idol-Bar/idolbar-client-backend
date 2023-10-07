@@ -124,3 +124,7 @@ def sms_verify(user_details: PhoneVerifySchema, db: Session = Depends(get_db)):
     logger.info(content)
     response = JSONResponse(content=jsonable_encoder(content))
     return response
+
+# register
+# verify
+# update-info
