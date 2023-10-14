@@ -36,7 +36,6 @@ async def get_orders(
 async def create_order(
     request: Request, data: CreateOrder, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    current_user= {"id":1}
     logger.info(data)
     cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
