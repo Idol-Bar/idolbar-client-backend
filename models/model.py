@@ -70,6 +70,17 @@ class Tier(Base):
     user_id = Column(Integer, ForeignKey("enduser.id"))
     enduser = relationship("EndUser", back_populates="tier", cascade="all,delete")
 
+class TierRule(Base):
+    __tablename__ = "tierrule"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String,nullable=False)
+    lower = Column(Integer,nullable=False)
+    higher = Column(Integer,nullable=False)
+    percentage = Column(Integer,nullable=False)
+    description = Column(String, nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
+
 
 class Point(Base):
     __tablename__ = 'point'

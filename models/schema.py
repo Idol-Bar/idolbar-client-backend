@@ -89,15 +89,20 @@ class RegisterPhoneSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class TierSchema(BaseModel):
+    name: str
+
 
 class ProfileSchema(BaseModel):
     id:int
     username: str
     birthday: str
-    #state: str
-    #division: str
-    #shop:str
-
+    postImage: Optional[List] = []
+    phoneno: str
+    createdate: datetime
+    code: Optional[str] = ""
+    tier: List[TierSchema]
+    unit:int
     class Config:
         orm_mode = True
 ##Point Schema
