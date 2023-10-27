@@ -63,7 +63,7 @@ async def get_profile(
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     
-    user = db.query(EndUser).get(current_user["id"])
+    user = db.query(User).get(current_user["id"])
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     unit = len(owner_points_count) if owner_points_count is not None else 0
     if not user:
