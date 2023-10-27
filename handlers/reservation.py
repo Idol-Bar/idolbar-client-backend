@@ -26,15 +26,16 @@ auth_handler = AuthToken()
 
 @router.get("/reservations", tags=["reservation"], response_model=Dict[str,List[ReserveSchema]])
 async def get_reservation(
-    tables:str = None,
+    tables:str = None,reservedate:date = date.today(),
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     if tables:
-        reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==date.today(),Tables.name==tables).order_by(desc(Reservation.createdate)).all()
+        reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==reservedate,Tables.name==tables).order_by(desc(Reservation.createdate)).all()
         return {"reservation":reservation}
     else:
         #reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==date.today()).order_by(desc(Reservation.createdate)).all()
-        return {"reservation":[]}
+        reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==reservedate).order_by(desc(Reservation.createdate)).all()
+        return {"reservation":reservation}
 
 
 @router.post("/reservations", tags=["reservation"])#, response_model=Dict[str,ReserveSchema])
