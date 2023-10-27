@@ -4,7 +4,7 @@ from typing import List, Dict
 from modules.token import AuthToken
 from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser,ProfileSchema,ReserveSchema
 from fastapi.logger import logger
-from models.model import Tier
+from models.model import Tier,Reservation,Tables
 from models.model import EndUser as User
 from models.model import Point
 from .database import get_db
