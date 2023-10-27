@@ -21,5 +21,5 @@ auth_handler = AuthToken()
 async def get_tiers(
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    tier = db.query(TierRule.id,TierRule.name,TierRule.createdate).order_by(desc(TierRule.createdate)).all()
+    tier = db.query(TierRule.id,TierRule.name,TierRule.createdate,TierRule.postImage,TierRule.description).order_by(desc(TierRule.createdate)).all()
     return {"tier":tier}
