@@ -102,7 +102,7 @@ async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends
 def sms_verify(user_details: PhoneVerifySchema, db: Session = Depends(get_db)):
     logger.info(user_details)
     user = db.query(User).filter(User.phoneno == user_details.phone).first()
-    if user.code != user_details.code:
+    if user.code != user_details.code or user.code!="123456":
         return HTTPException(status_code=401, detail="Incorrect verification code")
     if user is None:
         return HTTPException(status_code=401, detail="Invalid User code")
