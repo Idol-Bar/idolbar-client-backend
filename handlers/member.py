@@ -5,7 +5,7 @@ from modules.token import AuthToken
 from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser,ProfileSchema,ReserveSchema
 from fastapi.logger import logger
 from models.model import Tier,Reservation,Tables
-from models.model import EndUser as User
+from models.model import EndUser as User,TierRule
 from models.model import Point
 from .database import get_db
 from sqlalchemy.orm import Session
@@ -96,3 +96,4 @@ async def get_profile_reservation(
 ):
     reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(Reservation.username==current_user["username"]).order_by(desc(Reservation.createdate)).all()
     return {"reservation":reservation}
+

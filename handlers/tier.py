@@ -23,3 +23,8 @@ async def get_tiers(
 ):
     tier = db.query(TierRule.id,TierRule.name,TierRule.createdate,TierRule.postImage,TierRule.description).order_by(desc(TierRule.createdate)).all()
     return {"tier":tier}
+
+@router.get("/tier/{name}", tags=["tier"])
+def get_tiers_byname(name: str, db: Session = Depends(get_db)):
+    tier_data = db.query(TierRule).filter(TierRule.name == name).first()
+    return {"tier":tier_data}

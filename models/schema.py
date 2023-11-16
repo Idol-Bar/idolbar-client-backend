@@ -121,6 +121,13 @@ class SharePointSchema(OrmBase):
 
     class Config:
         orm_mode = True
+
+class SharePointWithPhonSchema(BaseModel):
+    phoneno: int
+    unit: int
+
+    class Config:
+        orm_mode = True
 ### Reservation
 class TablesSchema(OrmBase):
     name: str

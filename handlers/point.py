@@ -4,7 +4,8 @@ from fastapi.logger import logger
 from models.schema import (
     CurrentUser,
     PayPointSchema,
-    SharePointSchema
+    SharePointSchema,
+    SharePointWithPhonSchema
 )
 from typing import List, Dict
 from .database import get_db
@@ -48,6 +49,32 @@ async def share_point(
     owner = db.query(EndUser).get(current_user["id"])
     tier = db.query(Tier).filter_by(user_id=current_user["id"]).first()
     receive = db.query(EndUser).get(point_info.userId)
+    owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    logger.info(len(owner_points_count))
+    if len(owner_points_count)>int(point_info.unit):
+        logger.info("Take Amount")
+        db_points = db.query(Point).limit(point_info.unit).all()
+        for point in db_points:
+            logger.info("count")
+            new_transition = Transition(fromUser=owner.username,toUser=receive.username,status="success")
+            point.owner = receive
+            point.transitions.append(new_transition)
+        pay_point_log = PointLogs(amount=0,point=point_info.unit,tier=tier.name,username=owner.username,
+                        phoneno=owner.phoneno,status="Share",fromUser=owner.username,toUser=receive.username)
+        db.add(pay_point_log)
+        db.commit()
+        return  {"status":f"You send  {point_info.unit} points to {receive.username}","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
+    return HTTPException(status_code=400, detail="Not Enought Amount")
+
+@router.post("/sharepts/phone", tags=["point"])
+async def share_point_byphone(
+    request: Request, point_info: SharePointWithPhonSchema, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    #current_user = {"id":1}
+    logger.info(point_info.dict())
+    owner = db.query(EndUser).get(current_user["id"])
+    tier = db.query(Tier).filter_by(user_id=current_user["id"]).first()
+    receive = db.query(EndUser).filter(EndUser.phoneno ==point_info.phoneno)
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):

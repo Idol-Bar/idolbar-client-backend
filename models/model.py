@@ -59,6 +59,8 @@ class EndUser(Base):
     active = Column(Boolean, unique=False, default=True)
     tier = relationship("Tier", back_populates="enduser", cascade="all,delete", lazy="dynamic")
     code = Column(String,nullable=True)
+    state = Column(String,nullable=True)
+    township = Column(String,nullable=True)
     #point_id = Column(Integer, ForeignKey('point.id'))
     point = relationship("Point", back_populates="owner")
 
