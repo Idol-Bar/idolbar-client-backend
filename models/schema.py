@@ -274,3 +274,13 @@ class GetOrder(BaseModel):
 class GetOrderSchemaWithMeta(BaseModel):
     order: List[GetOrder] = []
     meta : MetaSchema
+
+class EventSchema(BaseModel):
+    id: Optional[int]
+    name: str
+    description: str
+    reservedate: date
+    postImage: Optional[List] = []
+
+    class Config:
+        orm_mode = True

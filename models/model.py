@@ -236,3 +236,15 @@ class FaqModel(Base):
     question = Column(String,nullable=False)
     answer = Column(String,nullable=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
+
+
+class EventModel(Base):
+    __tablename__ = 'events'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=False, nullable=True)
+    reservedate = Column(Date, nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    description = Column(String, nullable=False)
+    status = Column(String,nullable=True)
+    active = Column(Boolean, unique=False, default=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)
