@@ -76,6 +76,8 @@ async def get_profile(
         "phoneno": user.phoneno,
         "createdate": user.createdate,
         "code": user.code,
+        "state": user.state,
+        "division": user.division,
         "unit":unit,
         "tier": [{"name": tier.name for tier in user.tier}]
     }
