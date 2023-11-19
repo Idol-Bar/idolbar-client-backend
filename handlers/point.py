@@ -74,7 +74,9 @@ async def share_point_byphone(
     logger.info(point_info.dict())
     owner = db.query(EndUser).get(current_user["id"])
     tier = db.query(Tier).filter_by(user_id=current_user["id"]).first()
-    receive = db.query(EndUser).filter(EndUser.phoneno ==point_info.phoneno)
+    receive = db.query(EndUser).filter(EndUser.phoneno ==point_info.phoneno).first()
+    if not receive:
+        raise HTTPException(status_code=400, detail="User Not Found.")
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
