@@ -123,7 +123,7 @@ class SharePointSchema(OrmBase):
         orm_mode = True
 
 class SharePointWithPhonSchema(BaseModel):
-    phoneno: int
+    phoneno: str
     unit: int
 
     class Config:
