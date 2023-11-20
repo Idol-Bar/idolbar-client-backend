@@ -28,3 +28,10 @@ async def get_tiers(
 def get_tiers_byname(name: str, db: Session = Depends(get_db)):
     tier_data = db.query(TierRule).filter(TierRule.name == name).first()
     return {"tier":tier_data}
+
+@router.get("/tierRules", tags=["tier"])
+async def get_tier_rule(
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    tier = db.query(TierRule).order_by(desc(TierRule.createdate)).all()
+    return {"tier-rule":tier}
