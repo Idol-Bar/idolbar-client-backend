@@ -179,6 +179,7 @@ class FoodModel(Base):
     createdate = Column(DateTime, default=datetime.datetime.now)
     category_id = Column(Integer, ForeignKey('foodcategory.id'), nullable=False)
     category = relationship('FoodCategoryModel', back_populates='foods')
+    shop = Column(String, nullable=False)
 
 class Cart(Base):
     __tablename__ = 'carts'

@@ -214,6 +214,7 @@ class GetFoodSchema(OrmBase):
     createdate: datetime
     postImage: Optional[List] = []
     category: GetFoodCategorySchema  = []
+    shop: Optional[str] = "shop1"
 
     class Config:
         orm_mode = True
@@ -244,6 +245,7 @@ class CreateOrder(BaseModel):
     cart_id: int
     payment: str
     description: str
+    shop: Optional[str]= "shop1"
     postImage: Optional[List] = []
 
 
