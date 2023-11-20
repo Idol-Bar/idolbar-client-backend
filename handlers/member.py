@@ -66,6 +66,7 @@ async def get_profile(
     user = db.query(User).get(current_user["id"])
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     unit = len(owner_points_count) if owner_points_count is not None else 0
+    tier_rule = db.query(TierRule).filter(and_(TierRule.lower <= unit, TierRule.higher >= unit)).first()
     if not user:
         raise HTTPException(status_code=401, detail="User ID not found.")
     profile_data = {
@@ -79,7 +80,8 @@ async def get_profile(
         "state": user.state,
         "division": user.division,
         "unit":unit,
-        "tier": [{"name": tier.name for tier in user.tier}]
+        #"tier": [{"name": tier.name for tier in user.tier}]
+        "tier": [{"name": tier_rule.name}]
     }
     return {"profile":profile_data}
 
