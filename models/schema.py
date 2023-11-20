@@ -248,6 +248,12 @@ class CreateOrder(BaseModel):
     shop: Optional[str]= "shop1"
     postImage: Optional[List] = []
 
+    @validator("shop")
+    def check_shop(cls, v):
+        if v not in ["shop1", "shop2"]:
+            raise ValueError("Has to be Shop1 or Shop2")
+        return v
+
 
 
 class OrderItemSchema(BaseModel):
@@ -269,7 +275,7 @@ class GetOrder(BaseModel):
     status: str
     description: str
     order_items: Optional[List[OrderItemSchema]] = None
-
+    shop: Optional[str] = "shop1"
     class Config:
         orm_mode = True
 

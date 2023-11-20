@@ -203,6 +203,7 @@ class CartItem(Base):
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True)
+    shop = Column(String, nullable=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
     payment = Column(String,nullable=False)
     status = Column(String,nullable=False)

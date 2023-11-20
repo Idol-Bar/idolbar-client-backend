@@ -41,7 +41,7 @@ async def create_order(
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
     logger.info(cart.cart_items)
-    new_order = Order(payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"])
+    new_order = Order(payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
     for cart_item in cart.cart_items:
         logger.info(cart_item)
         order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
