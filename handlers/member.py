@@ -13,7 +13,7 @@ from fastapi.encoders import jsonable_encoder
 import logging
 from firebase_admin import auth as firebase_auth
 from modules.dependency import get_current_user
-from sqlalchemy import func,desc
+from sqlalchemy import func,desc,and_
 
 router = APIRouter()
 
