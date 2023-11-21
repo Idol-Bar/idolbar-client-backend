@@ -74,7 +74,8 @@ def login(user_details: PhoneLoginSchema, db: Session = Depends(get_db)):
 async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends(get_db)):
     logger.info(user_details)
     user = db.query(User).filter(User.phoneno == user_details.phone).first()
-    code = str(random.randint(100000, 999999))
+    #code = str(random.randint(100000, 999999))
+    code = "123456"
     logger.info(f'Code: {code}')
     if user is None:
         tier = Tier(name="gold")
