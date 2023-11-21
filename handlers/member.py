@@ -69,6 +69,7 @@ async def get_profile(
     tier_rule = db.query(TierRule).filter(and_(TierRule.lower <= unit, TierRule.higher >= unit)).first()
     if not user:
         raise HTTPException(status_code=401, detail="User ID not found.")
+    user_tier = tier_rule.name if tier_rule else 0
     profile_data = {
         "id": user.id,
         "username": user.username,
@@ -81,7 +82,7 @@ async def get_profile(
         "division": user.division,
         "unit":unit,
         #"tier": [{"name": tier.name for tier in user.tier}]
-        "tier": [{"name": tier_rule.name}]
+        "tier": [{"name": user_tier}]
     }
     return {"profile":profile_data}
 
