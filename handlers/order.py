@@ -26,9 +26,9 @@ async def get_orders(
     page: int = 1 , per_page: int=10,
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    count = db.query(Order).count()
+    count = db.query(Order).filter(Order.user_id==current_user["id"]).count()
     meta_data =  pagination(page,per_page,count)
-    order_data = db.query(Order).order_by(desc(Order.createdate)).limit(per_page).offset((page - 1) * per_page).all()
+    order_data = db.query(Order).filter(Order.user_id==current_user["id"]).order_by(desc(Order.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"order":order_data,"meta":meta_data}
 
 

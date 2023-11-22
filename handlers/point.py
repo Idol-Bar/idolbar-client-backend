@@ -55,11 +55,12 @@ async def share_point(
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
         logger.info("Take Amount")
-        db_points = db.query(Point).limit(point_info.unit).all()
+        db_points = db.query(Point).filter(Point.owner_id == current_user["id"]).limit(point_info.unit).all()
         for point in db_points:
             logger.info("count")
             new_transition = Transition(fromUser=owner.username,toUser=receive.username,status="success")
             point.owner = receive
+            point.owner_id= receive.id
             point.transitions.append(new_transition)
         pay_point_log = PointLogs(amount=0,point=point_info.unit,tier=tier.name,username=owner.username,
                         phoneno=owner.phoneno,status="Share",fromUser=owner.username,toUser=receive.username)
@@ -86,11 +87,12 @@ async def share_point_byphone(
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
         logger.info("Take Amount")
-        db_points = db.query(Point).limit(point_info.unit).all()
+        db_points = db.query(Point).filter(Point.owner_id == current_user["id"]).limit(point_info.unit).all()
         for point in db_points:
             logger.info("count")
             new_transition = Transition(fromUser=owner.username,toUser=receive.username,status="success")
             point.owner = receive
+            point.owner_id= receive.id
             point.transitions.append(new_transition)
         pay_point_log = PointLogs(amount=0,point=point_info.unit,tier=tier.name,username=owner.username,
                         phoneno=owner.phoneno,status="Share",fromUser=owner.username,toUser=receive.username)
