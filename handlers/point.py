@@ -45,6 +45,8 @@ async def share_point(
     request: Request, point_info: SharePointSchema, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     #current_user = {"id":1}
+    if current_user["id"] == point_info.userId:
+        raise HTTPException(status_code=400, detail="You Can't Share Yourself.")
     logger.info(point_info.dict())
     owner = db.query(EndUser).get(current_user["id"])
     tier = db.query(Tier).filter_by(user_id=current_user["id"]).first()
@@ -78,6 +80,8 @@ async def share_point_byphone(
     if not receive:
         logger.info("No User with Phone")
         raise HTTPException(status_code=400, detail="User Not Found.")
+    if current_user["id"] == receive.id:
+        raise HTTPException(status_code=400, detail="You Can't Share Yourself.")
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
