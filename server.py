@@ -31,6 +31,16 @@ def create_app():
     import handlers.database as app_model
     from models.model import EndUser as User
 
+    app.mount("/public", StaticFiles(directory="dist"), name="public")
+    # app.mount("/build", StaticFiles(directory="dist/build"), name="build")
+    app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+
+    @app.get("/{full_path:path}")
+    def getSPA():
+        with open("dist/index.html", "r") as file_index:
+            html_content = file_index.read()
+        return HTMLResponse(html_content, status_code=200)
+        
     app_model.Base.metadata.create_all(bind=engine)
     logging.basicConfig(
        format='AloDawPyi:{levelname:7} {message}', style='{', level=logging.DEBUG)
