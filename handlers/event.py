@@ -28,9 +28,10 @@ async def get_events(
     events = db.query(EventModel).order_by(desc(EventModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"event":events,"meta":meta_data}
 
-@router.get("/coming-events", tags=["events"])
+@router.get("/comingEvents", tags=["events"])
 async def get_coming_events(
-    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+    db: Session = Depends(get_db)#, current_user: CurrentUser = Depends(get_current_user)
 ):
-    events = db.query(EventModel).filter(EventModel.reservedate > date.today()).order_by(desc(EventModel.createdate)).all()
-    return {"event":events}
+    #events = db.query(EventModel).filter(EventModel.reservedate > date.today()).order_by(desc(EventModel.createdate)).all()
+    events = db.query(EventModel).order_by(desc(EventModel.createdate)).all()
+    return {"coming-event":events}

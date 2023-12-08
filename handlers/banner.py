@@ -20,7 +20,7 @@ auth_handler = AuthToken()
 @router.get("/banners", tags=["banner"])
 async def get_app_banners(
     page: int = 1 , per_page: int=10,
-    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+    db: Session = Depends(get_db)#, current_user: CurrentUser = Depends(get_current_user)
 ):
     banners = db.query(BannerModel).order_by(desc(BannerModel.createdate)).all()
     return {"banner":banners}

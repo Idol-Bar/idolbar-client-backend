@@ -31,16 +31,7 @@ def create_app():
     import handlers.database as app_model
     from models.model import EndUser as User
 
-    app.mount("/public", StaticFiles(directory="dist"), name="public")
-    # app.mount("/build", StaticFiles(directory="dist/build"), name="build")
-    app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
-
-    @app.get("/{full_path:path}")
-    def getSPA():
-        with open("dist/index.html", "r") as file_index:
-            html_content = file_index.read()
-        return HTMLResponse(html_content, status_code=200)
-        
+   
     app_model.Base.metadata.create_all(bind=engine)
     logging.basicConfig(
        format='AloDawPyi:{levelname:7} {message}', style='{', level=logging.DEBUG)
@@ -54,14 +45,14 @@ def create_app():
     app.include_router(transition.router,dependencies=[Depends(AuthHandler)])
     #app.include_router(posts.router,dependencies=[Depends(AdminHandler)])
     app.include_router(reservation.router,dependencies=[Depends(AuthHandler)])
-    app.include_router(banner.router,dependencies=[Depends(AuthHandler)])
+    app.include_router(banner.router)#,dependencies=[Depends(AuthHandler)])
     app.include_router(category.router,dependencies=[Depends(AuthHandler)])
-    app.include_router(post.router,dependencies=[Depends(AuthHandler)])
+    app.include_router(post.router)#,dependencies=[Depends(AuthHandler)])
     app.include_router(food.router,dependencies=[Depends(AuthHandler)])
     app.include_router(cart.router,dependencies=[Depends(AuthHandler)])
     app.include_router(order.router,dependencies=[Depends(AuthHandler)])
     app.include_router(tier.router,dependencies=[Depends(AuthHandler)])
-    app.include_router(event.router,dependencies=[Depends(AuthHandler)])
+    app.include_router(event.router)#,dependencies=[Depends(AuthHandler)])
     @app.on_event("startup")
     async def startup_event():
         logger.info("Database Startup Complete")
