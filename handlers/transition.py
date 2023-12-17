@@ -29,7 +29,7 @@ async def get_transition(
     #username = "ppk"a
     if not db_user:
         raise HTTPException(status_code=404, detail="Users ID not found.")
-    count = db.query(PointLogs).count()
+    count = db.query(PointLogs).filter(or_(PointLogs.fromUser == username, PointLogs.toUser == username)).count()
     meta_data =  pagination(page,per_page,count)
     transition = db.query(PointLogs).filter(or_(PointLogs.fromUser == username, PointLogs.toUser == username)).order_by(desc(PointLogs.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"transition":transition,"meta":meta_data}
