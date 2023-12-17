@@ -58,9 +58,9 @@ async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db)
 #         raise HTTPException(status_code=404, detail="User ID not found.")
 #     return member
 
-@router.get("/profile/me", tags=["profile"], response_model=Dict[str,ProfileSchema])
+@router.get("/profiles/{status}", tags=["profile"], response_model=Dict[str,ProfileSchema])
 async def get_profile(
-    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+   status: str, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     
     user = db.query(User).get(current_user["id"])

@@ -93,13 +93,13 @@ async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends
         db.commit()
         db.refresh(user)
     logger.info("Sending SMS")
-    result = await send_sms(phone=user_details.phone,message=code)
-    logger.info(result)
+    #result = await send_sms(phone=user_details.phone,message=code)
+    #logger.info(result)
     return {"detail": "User registered. Six-digit verification code sent"}
         
     
 
-@router.post("/verify", tags=["auth"])
+@router.post("/login", tags=["auth"])
 def sms_verify(user_details: PhoneVerifySchema, db: Session = Depends(get_db)):
     logger.info(user_details)
     user = db.query(User).filter(User.phoneno == user_details.phone).first()
