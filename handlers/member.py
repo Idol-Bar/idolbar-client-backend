@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, APIRouter, Request, Depends
 from fastapi.responses import JSONResponse
 from typing import List, Dict
 from modules.token import AuthToken
-from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser,ProfileSchema,ReserveSchema
+from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhoneSchema,CurrentUser,ProfileSchema,ReserveSchema,RegisterPhoneSchemaRequest
 from fastapi.logger import logger
 from models.model import Tier,Reservation,Tables
 from models.model import EndUser as User,TierRule
@@ -35,8 +35,9 @@ async def update_info(data: RegisterPhoneSchema,db: Session = Depends(get_db), c
     db.refresh(db_user)
     return {"user":db_user}
 
-@router.put("/phone-register", tags=["member"])
-async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+@router.post("/phoneRegisters", tags=["member"])
+async def phone_register(register: RegisterPhoneSchemaRequest,db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    data = register.phoneRegister
     db_user = db.query(User).get(current_user["id"])
     if not db_user:
         raise HTTPException(status_code=404, detail="News ID not found.")
@@ -48,7 +49,7 @@ async def phone_register(data: RegisterPhoneSchema,db: Session = Depends(get_db)
     db_user.status = "CONFIRM"
     db.commit()
     db.refresh(db_user)
-    return {"user":db_user}
+    return {"phone-register":db_user}
 
 # @router.get("/me", tags=["member"], response_model=ProfileSchema)
 # def get_profile(db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):

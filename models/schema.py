@@ -89,6 +89,9 @@ class RegisterPhoneSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class RegisterPhoneSchemaRequest(BaseModel):
+    phoneRegister: RegisterPhoneSchema
+
 class TierSchema(BaseModel):
     name: str
 
