@@ -235,6 +235,9 @@ class AddToCart(BaseModel):
     class Config:
         orm_mode = True
 
+class AddToCartSchemaRequest(BaseModel):
+    cart: AddToCart
+
 class CartList(BaseModel):
     price:int
     quantity:int
