@@ -20,12 +20,12 @@ auth_handler = AuthToken()
 
 @router.get("/foodCategories", tags=["food"], response_model=FoodCategorySchemaWithMeta)
 async def get_food_categories(
-    page: int = 1 , per_page: int=10,
+    page: int = 1 , per_page: int=10,shop:str="shop1",
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     count = db.query(FoodCategoryModel).count()
     meta_data =  pagination(page,per_page,count)
-    categories = db.query(FoodCategoryModel).order_by(desc(FoodCategoryModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
+    categories = db.query(FoodCategoryModel).filter(FoodCategoryModel.shop==shop).order_by(desc(FoodCategoryModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"foodCategory":categories,"meta":meta_data}
 
 

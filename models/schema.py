@@ -195,6 +195,7 @@ class GetAppPostSchema(OrmBase):
 class GetFoodCategorySchema(OrmBase):
     id: int
     name: str
+    shop: Optional[str] = ""
     postImage: Optional[List] = []
     createdate: datetime
     class Config:

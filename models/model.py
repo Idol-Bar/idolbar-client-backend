@@ -38,6 +38,7 @@ class PostModel(Base):
     createdate = Column(DateTime, default=datetime.datetime.now)
     publishdate = Column(DateTime, default=datetime.datetime.now)
     isnoti = Column(Boolean, unique=False, default=False)
+    shop = Column(String, nullable=False)
     
 class CategoryModel(Base):
     __tablename__ = "category"
@@ -164,6 +165,7 @@ class FoodCategoryModel(Base):
     postImage = Column(ARRAY(JSON), nullable=True)
     createdate = Column(DateTime, default=datetime.datetime.now)
     foods = relationship('FoodModel', back_populates='category')
+    shop = Column(String, nullable=False)
 
 class FoodModel(Base):
     __tablename__ = "foods"
@@ -253,3 +255,4 @@ class EventModel(Base):
     status = Column(String,nullable=True)
     active = Column(Boolean, unique=False, default=True)
     createdate = Column(DateTime, default=datetime.datetime.now)
+    shop = Column(String, nullable=False)
