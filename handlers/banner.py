@@ -36,6 +36,13 @@ async def get_app_notification(
     notifications = db.query(NotiModel).order_by(desc(NotiModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return jsonable_encoder({"notification":notifications,"meta":meta_data})
 
+@router.get("/notifications/{id}", tags=["notification"])
+def get_noti_byid(id: int, db: Session = Depends(get_db)):
+    notification = db.get(NotiModel, id)
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification ID not found.")
+    return {"notification":notification}
+
 @router.get("/faqs", tags=["faq"])#, response_model=Dict[str,List[GetBookSchema],str,str])
 async def get_app_faq(
     page: int = 1 , per_page: int=5,

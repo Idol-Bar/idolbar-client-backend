@@ -253,14 +253,17 @@ class CreateOrder(BaseModel):
     description: str
     shop: Optional[str]= "shop1"
     postImage: Optional[List] = []
-
+    reservedate:date
+    username:str
+    phone:str
     @validator("shop")
     def check_shop(cls, v):
         if v not in ["shop1", "shop2"]:
             raise ValueError("Has to be Shop1 or Shop2")
         return v
 
-
+class CreateOrderSchemaRequest(BaseModel):
+    order: CreateOrder
 
 class OrderItemSchema(BaseModel):
     id: Optional[int]

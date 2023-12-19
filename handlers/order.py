@@ -5,7 +5,7 @@ from models.schema import (
     CurrentUser,
     CreateOrder,
     GetOrder,
-    GetOrderSchemaWithMeta
+    GetOrderSchemaWithMeta,CreateOrderSchemaRequest
  
 )
 from typing import List, Dict
@@ -34,14 +34,15 @@ async def get_orders(
 
 @router.post("/orders", tags=["order"])
 async def create_order(
-    request: Request, data: CreateOrder, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+    request: Request, order: CreateOrderSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
+    data = order.order
     logger.info(data)
     cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
     logger.info(cart.cart_items)
-    new_order = Order(payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
+    new_order = Order(username=data.username,phone=data.phone,createdate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
     for cart_item in cart.cart_items:
         logger.info(cart_item)
         order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)

@@ -204,6 +204,8 @@ class CartItem(Base):
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False)
+    phone = Column(String, nullable=False)
     shop = Column(String, nullable=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
     payment = Column(String,nullable=False)

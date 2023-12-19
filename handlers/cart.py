@@ -4,7 +4,7 @@ from fastapi.logger import logger
 from models.schema import (
     CurrentUser,
     AddToCart,
- 
+    AddToCartSchemaRequest,
 )
 from typing import List, Dict
 from .database import get_db
@@ -27,7 +27,8 @@ async def get_carts(
         raise HTTPException(status_code=404, detail="Customer not found")
     cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
-        raise HTTPException(status_code=404, detail="Open cart not found for this customer")
+        #raise HTTPException(status_code=404, detail="Open cart not found for this customer")
+        return {"cart":[]}
     cart_items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     cart_item_list = [ {"product_id": item.food_id,"product_name": item.food.name,"quantity": item.quantity,"price":item.food.price} for item in cart_items]
     return {"cart":cart_items}
@@ -35,9 +36,10 @@ async def get_carts(
     
 @router.post("/carts", tags=["cart"])
 async def add_cart(
-    request: Request, data: AddToCart, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+    request: Request, item: AddToCartSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    logger.info(data)
+    logger.info(item)
+    data = item.cart
     user = db.query(EndUser).get(current_user["id"])
     food = db.query(FoodModel).get(data.food_id)
     if not user or not food:
