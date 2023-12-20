@@ -230,6 +230,7 @@ class GetAppPostSchema(OrmBase):
     id: Optional[int]
     category: str
     title: str
+    shop: str
     description: str
     createdate: datetime
     publishdate: datetime
@@ -343,6 +344,7 @@ class GetOrderSchemaWithMeta(BaseModel):
 class EventSchema(BaseModel):
     id: Optional[int]
     name: str
+    shop: str
     description: str
     reservedate: date
     postImage: Optional[List] = []

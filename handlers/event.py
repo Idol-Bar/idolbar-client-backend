@@ -28,6 +28,14 @@ async def get_events(
     events = db.query(EventModel).order_by(desc(EventModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"event":events,"meta":meta_data}
 
+@router.get("/comingEvents/{id}", tags=["events"], response_model=Dict[str,EventSchema])
+def get_event_byid(id: int, db: Session = Depends(get_db)):
+    events = db.get(EventModel, id)
+    if not events:
+        raise HTTPException(status_code=404, detail="Event ID not found.")
+    return {"coming-event":events}
+
+
 @router.get("/comingEvents", tags=["events"])
 async def get_coming_events(
     db: Session = Depends(get_db)#, current_user: CurrentUser = Depends(get_current_user)
