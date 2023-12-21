@@ -85,7 +85,7 @@ class RegisterPhoneSchema(BaseModel):
     state: str
     division: str
     shop:str
-
+    postImage: Optional[List] = []
     class Config:
         orm_mode = True
 
@@ -159,6 +159,10 @@ class ReserveSchema(OrmBase):
 
     class Config:
         orm_mode = True
+
+class ReserveSchemaWithMeta(BaseModel):
+    reserveList: List[ReserveSchema] = []
+    meta : MetaSchema
 
 class CreateReserveSchema(OrmBase):
     id: Optional[int]

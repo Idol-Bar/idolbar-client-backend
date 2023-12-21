@@ -6,7 +6,7 @@ from models.schema import (
     ReserveSchema,
     CreateReserveSchemaRequest,
     TablesSchema,
-    CreateTableSchemaRequest
+    CreateTableSchemaRequest,ReserveSchemaWithMeta
 )
 from typing import List, Dict
 from .database import get_db
@@ -33,13 +33,24 @@ async def get_reservation(
         reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==reservedate,Tables.name==tables,Tables.shop==shop).order_by(desc(Reservation.createdate)).all()
         return {"reservation":reservation}
     else:
-        #reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(func.date(Reservation.reservedate)==date.today()).order_by(desc(Reservation.createdate)).all()
         return {"reservation":[]}
+
+
+@router.get("/reserveLists", tags=["reservation"],response_model=ReserveSchemaWithMeta)
+async def get_reservelist(
+    page: int = 1 , per_page: int=10,
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    print(current_user)
+    count = db.query(Reservation).filter(Reservation.userId==current_user["id"]).count()
+    meta_data =  pagination(page,per_page,count)
+    reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(Reservation.userId==current_user["id"]).order_by(desc(Reservation.createdate)).all()
+    return {"reserveList":reservation,"meta":meta_data}
 
 
 @router.post("/reservations", tags=["reservation"])#, response_model=Dict[str,ReserveSchema])
 async def add_reservation(
-    request: Request, reservation: CreateReserveSchemaRequest, db: Session = Depends(get_db)
+    request: Request, reservation: CreateReserveSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     logger.info(reservation.dict())
     data = reservation.reservation
@@ -48,7 +59,7 @@ async def add_reservation(
     if is_reserved:
         raise HTTPException(status_code=400, detail="Reservation already registered.")
     tables = Tables(name=data.tables[0],reservedate=data.reservedate,shop=data.shop)
-    order = Reservation(username=data.username, phoneno=data.phoneno,reservedate=data.reservedate,reservetime=data.reservetime,
+    order = Reservation(userId=current_user["id"],username=data.username, phoneno=data.phoneno,reservedate=data.reservedate,reservetime=data.reservetime,
                     description=data.description,status=data.status,active=True,tables=[tables])
     db.add(order)
     db.add(tables)

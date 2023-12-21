@@ -47,6 +47,7 @@ async def phone_register(register: RegisterPhoneSchemaRequest,db: Session = Depe
     db_user.division =  data.division
     db_user.shop = data.shop
     db_user.status = "CONFIRM"
+    db_user.postImage = data.postImage
     db.commit()
     db.refresh(db_user)
     return {"phone-register":db_user}

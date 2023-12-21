@@ -145,6 +145,7 @@ class Reservation(Base):
     description = Column(String, nullable=False)
     status = Column(String, nullable=False)
     active = Column(Boolean, unique=False, default=True)
+    userId = Column(Integer, nullable=False)
     tables = relationship('Tables', back_populates='reservation', cascade='all, delete-orphan')
 
 class Tables(Base):
