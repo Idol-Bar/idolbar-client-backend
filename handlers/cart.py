@@ -31,7 +31,7 @@ async def get_carts(
         return {"cart":[]}
     cart_items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     cart_item_list = [ {"product_id": item.food_id,"product_name": item.food.name,"quantity": item.quantity,"price":item.food.price} for item in cart_items]
-    return {"cart":cart_items}
+    return {"cart":cart_items,"meta":{"createdate":cart.createdate.strftime('%Y-%m-%d')}}
 
     
 @router.post("/carts", tags=["cart"])
@@ -57,6 +57,15 @@ async def add_cart(
         db.add(cart_item)
     db.commit()
     return {"cart":data}
+
+@router.get("/carts/{id}", tags=["cart"])
+def get_cart_byid(id: int, db: Session = Depends(get_db)):
+    cartitem = db.get(CartItem, id)
+    if not cartitem:
+        raise HTTPException(status_code=404, detail="Cart ID not found.")
+    return {"cart":cartitem}
+
+
 
 @router.delete("/carts/{_id}", tags=["cart"])
 async def remove_cart(_id: int, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):

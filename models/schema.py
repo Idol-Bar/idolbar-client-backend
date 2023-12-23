@@ -355,3 +355,19 @@ class EventSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+
+##Payment 
+
+class PaymentSchema(BaseModel):
+    id: Optional[int]
+    name: str
+    account: str
+    shop: Optional[str] = "shop1"
+    createdate: date
+    #postImage: Optional[List] = []
+
+    class Config:
+        orm_mode = True
+
