@@ -33,3 +33,10 @@ async def get_transition(
     meta_data =  pagination(page,per_page,count)
     transition = db.query(PointLogs).filter(or_(PointLogs.fromUser == username, PointLogs.toUser == username)).order_by(desc(PointLogs.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"transition":transition,"meta":meta_data}
+
+@router.get("/transitions/{id}", tags=["transition"])
+def get_food_byid(id: int, db: Session = Depends(get_db)):
+    point = db.get(PointLogs, id)
+    if not point:
+        raise HTTPException(status_code=404, detail="Point ID not found.")
+    return {"transition":point}
