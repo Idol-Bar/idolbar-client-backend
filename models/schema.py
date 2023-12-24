@@ -146,6 +146,8 @@ class TablesSchema(OrmBase):
     createdate: datetime
     reservation_id:int
 
+
+
 class ReserveSchema(OrmBase):
     username: str
     phoneno: str
@@ -159,6 +161,28 @@ class ReserveSchema(OrmBase):
 
     class Config:
         orm_mode = True
+
+class ReservationSchema(OrmBase):
+    userId:int
+    username: str
+    phoneno: str
+    createdate: datetime
+    reservedate: date
+    reservetime: time
+    description: str
+    status: bool
+    active: Optional[bool] = False
+    tables: List[TablesSchema]  = []
+
+    class Config:
+        orm_mode = True
+
+class RestableScema(OrmBase):
+    name: str
+    reservedate: date
+    createdate: datetime
+    reservation_id:int
+    reservation:ReservationSchema
 
 class ReserveSchemaWithMeta(BaseModel):
     reserveList: List[ReserveSchema] = []

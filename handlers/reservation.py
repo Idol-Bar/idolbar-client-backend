@@ -6,7 +6,7 @@ from models.schema import (
     ReserveSchema,
     CreateReserveSchemaRequest,
     TablesSchema,
-    CreateTableSchemaRequest,ReserveSchemaWithMeta
+    CreateTableSchemaRequest,ReserveSchemaWithMeta,RestableScema
 )
 from typing import List, Dict
 from .database import get_db
@@ -88,7 +88,7 @@ async def delete_reservation(id: int, db: Session = Depends(get_db)):
     return {"message": "User has been deleted succesfully"}
 
 #####
-@router.get("/restables", tags=["reservation"], response_model=Dict[str,List[TablesSchema]])
+@router.get("/restables", tags=["reservation"], response_model=Dict[str,List[RestableScema]])
 async def get_tables(
     reservedate:date = None,shop:str=None,
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
