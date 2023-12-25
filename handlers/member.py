@@ -6,7 +6,7 @@ from models.schema import UserSchema, LoginSchema,PhoneLoginSchema,RegisterPhone
 from fastapi.logger import logger
 from models.model import Tier,Reservation,Tables
 from models.model import EndUser as User,TierRule
-from models.model import Point
+from models.model import Point,Money
 from .database import get_db
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
@@ -66,7 +66,8 @@ async def get_profile(
 ):
     
     user = db.query(User).get(current_user["id"])
-    owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    #owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    owner_points_count = db.query(Money).filter(Money.user_id == str(current_user["id"])).all()
     unit = len(owner_points_count) if owner_points_count is not None else 0
     tier_rule = db.query(TierRule).filter(and_(TierRule.lower <= unit, TierRule.higher >= unit)).first()
     if not user:
