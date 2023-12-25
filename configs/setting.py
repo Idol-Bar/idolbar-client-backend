@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     _dbpass = "postgres"
     _dbhost = "localhost"
     _dbport = "5432"
+    _dbname = "idolbar"
     _DATABASE_URL = f"postgresql://{_dbuser}:{_dbpass }@{_dbhost}:{_dbport}/idolbar"
     _host = "0.0.0.0"
     _port = 8001
