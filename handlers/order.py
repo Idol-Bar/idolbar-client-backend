@@ -4,17 +4,17 @@ from fastapi.logger import logger
 from models.schema import (
     CurrentUser,
     CreateOrder,
-    GetOrder,
+    GetOrder,GetReservedOrder,
     GetOrderSchemaWithMeta,CreateOrderSchemaRequest
  
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import Cart,CartItem,FoodModel,EndUser,Order,OrderItem
+from models.model import Cart,CartItem,FoodModel,EndUser,Order,OrderItem,Reservation
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
-from sqlalchemy import desc,Enum
+from sqlalchemy import desc,Enum,func
 from modules.utils import pagination
 from firebase_admin import messaging
 router = APIRouter()
@@ -30,6 +30,19 @@ async def get_orders(
     meta_data =  pagination(page,per_page,count)
     order_data = db.query(Order).filter(Order.user_id==current_user["id"]).order_by(desc(Order.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"order":order_data,"meta":meta_data}
+
+
+@router.get("/reservedOrders", tags=["order"], response_model=Dict[str,List[GetReservedOrder]])#, response_model=Dict[str,List[GetOrder]])
+async def get_orders(
+   reserveid:int=None,
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    reservation = db.get(Reservation, reserveid)
+    if not reservation:
+        raise HTTPException(status_code=404, detail="Reservation ID not found.")
+    order_data = db.query(Order).filter(Order.user_id==current_user["id"], func.date(Order.createdate) == reservation.reservedate).order_by(desc(Order.createdate)).all()
+    return {"reserved-order":order_data}
+
 
 
 @router.post("/orders", tags=["order"])

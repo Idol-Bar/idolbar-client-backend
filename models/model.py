@@ -62,6 +62,7 @@ class EndUser(Base):
     code = Column(String,nullable=True)
     state = Column(String,nullable=True)
     division = Column(String,nullable=True)
+    gender = Column(String, unique=False, nullable=True)
     #point_id = Column(Integer, ForeignKey('point.id'))
     point = relationship("Point", back_populates="owner")
 

@@ -86,6 +86,7 @@ class RegisterPhoneSchema(BaseModel):
     division: str
     shop:str
     postImage: Optional[List] = []
+    gender: Optional[str] = "male"
     class Config:
         orm_mode = True
 
@@ -353,6 +354,19 @@ class OrderItemSchema(BaseModel):
         orm_mode = True
 
 class GetOrder(BaseModel):
+    id: Optional[int]
+    createdate: datetime
+    payment: str
+    postImage: Optional[List] = []
+    user_id: int
+    status: str
+    description: str
+    order_items: Optional[List[OrderItemSchema]] = None
+    shop: Optional[str] = "shop1"
+    class Config:
+        orm_mode = True
+
+class GetReservedOrder(BaseModel):
     id: Optional[int]
     createdate: datetime
     payment: str
