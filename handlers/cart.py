@@ -31,6 +31,7 @@ async def get_carts(
         return {"cart":[]}
     cart_items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     cart_item_list = [ {"product_id": item.food_id,"product_name": item.food.name,"quantity": item.quantity,"price":item.food.price} for item in cart_items]
+    print(cart_item_list)
     return {"cart":cart_items,"meta":{"createdate":cart.createdate.strftime('%Y-%m-%d')}}
 
     
