@@ -193,6 +193,8 @@ class Cart(Base):
     status = Column(String,nullable=False)
     user_id = Column(Integer, ForeignKey("enduser.id"))
     #enduser = relationship("EndUser", back_populates="cart", cascade="all,delete")
+    tables = Column(String, nullable=False)
+    reservedate = Column(Date, nullable=False)
     cart_items = relationship('CartItem', back_populates='cart')
 
 class CartItem(Base):
@@ -211,6 +213,8 @@ class Order(Base):
     username = Column(String, nullable=False)
     phone = Column(String, nullable=False)
     shop = Column(String, nullable=False)
+    tables = Column(String, nullable=False)
+    reservedate = Column(Date, nullable=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
     payment = Column(String,nullable=False)
     status = Column(String,nullable=False)

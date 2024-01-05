@@ -309,6 +309,8 @@ class FoodSchemaWithMeta(BaseModel):
 class AddToCart(BaseModel):
     food_id: int
     quantity: int
+    reservedate: date
+    tableId:str
 
     class Config:
         orm_mode = True
@@ -333,6 +335,7 @@ class CreateOrder(BaseModel):
     postImage: Optional[List] = []
     reservedate:date
     username:str
+    tables:str
     phone:str
     @validator("shop")
     def check_shop(cls, v):

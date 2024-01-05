@@ -32,7 +32,7 @@ async def get_carts(
     cart_items = db.query(CartItem).filter(CartItem.cart_id == cart.id).all()
     cart_item_list = [ {"product_id": item.food_id,"product_name": item.food.name,"quantity": item.quantity,"price":item.food.price} for item in cart_items]
     print(cart_item_list)
-    return {"cart":cart_items,"meta":{"createdate":cart.createdate.strftime('%Y-%m-%d')}}
+    return {"cart":cart_items,"meta":{"createdate":cart.reservedate.strftime('%Y-%m-%d'),"tableId":cart.tables}}
 
     
 @router.post("/carts", tags=["cart"])
@@ -47,7 +47,7 @@ async def add_cart(
             raise HTTPException(status_code=404, detail="Customer or Product not found")
     cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
-        cart = Cart(user_id=user.id,status="OPEN")
+        cart = Cart(user_id=user.id,status="OPEN",reservedate=item.cart.reservedate,tables=item.cart.tableId)
         db.add(cart)
         db.commit()
     cart_item = db.query(CartItem).filter(CartItem.cart_id == cart.id, CartItem.food_id == data.food_id).first()
