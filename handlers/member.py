@@ -67,12 +67,12 @@ async def get_profile(
 ):
     
     user = db.query(User).get(current_user["id"])
-    #owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
+    points = len(owner_points_count) if owner_points_count is not None else 0
     #owner_points_count = db.query(Money).filter(Money.user_id == str(current_user["id"])).all()
-    owner_points_count = db.query(func.sum(Money.amount)).filter(Money.user_id == str(current_user["id"])).scalar()
-    print(owner_points_count)
-    unit = owner_points_count if owner_points_count is not None else 0
-    #unit = len(owner_points_count) if owner_points_count is not None else 0
+    owner_money = db.query(func.sum(Money.amount)).filter(Money.user_id == str(current_user["id"])).scalar()
+    unit = owner_money if owner_money is not None else 0
+    
     tier_rule = db.query(TierRule).filter(and_(TierRule.lower <= unit, TierRule.higher >= unit)).first()
     if not user:
         raise HTTPException(status_code=401, detail="User ID not found.")
@@ -87,7 +87,7 @@ async def get_profile(
         "code": user.code,
         "state": user.state,
         "division": user.division,
-        "unit":unit,
+        "unit":points,
         #"tier": [{"name": tier.name for tier in user.tier}]
         "tier": [{"name": user_tier}]
     }

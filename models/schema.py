@@ -143,6 +143,7 @@ class CreateTableSchemaRequest(BaseModel):
 
 class TablesSchema(OrmBase):
     name: str
+    shop:Optional[str] = ""
     reservedate: date
     createdate: datetime
     reservation_id:int

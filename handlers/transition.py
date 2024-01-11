@@ -7,13 +7,13 @@ from models.schema import (
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import  PointLogs
+from models.model import  PointLogs,TierRule,Money
 from models.model import EndUser as User
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
 from modules.utils import pagination
-from sqlalchemy import desc,or_
+from sqlalchemy import desc,or_,func,and_
 router = APIRouter()
 auth_handler = AuthToken()
 
@@ -35,8 +35,13 @@ async def get_transition(
     return {"transition":transition,"meta":meta_data}
 
 @router.get("/transitions/{id}", tags=["transition"])
-def get_food_byid(id: int, db: Session = Depends(get_db)):
+def get_food_byid(id: int, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
     point = db.get(PointLogs, id)
     if not point:
         raise HTTPException(status_code=404, detail="Point ID not found.")
+    owner_money = db.query(func.sum(Money.amount)).filter(Money.user_id == str(current_user["id"])).scalar()
+    unit = owner_money if owner_money is not None else 0
+    tier_rule = db.query(TierRule).filter(and_(TierRule.lower <= unit, TierRule.higher >= unit)).first()
+    user_tier = tier_rule.name if tier_rule else "Unavaliable"
+    point.tier = user_tier
     return {"transition":point}

@@ -22,6 +22,5 @@ async def get_payment(
     shop: str = "shop1",
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-
     payment = db.query(PaymentModel).filter(PaymentModel.shop==shop).order_by(desc(PaymentModel.createdate)).all()
     return {"payment":payment}
