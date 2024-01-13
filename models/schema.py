@@ -331,7 +331,7 @@ class CartList(BaseModel):
 class CreateOrder(BaseModel):
     cart_id: int
     payment: str
-    description: str
+    description: Optional[str]= ""
     shop: Optional[str]= "shop1"
     postImage: Optional[List] = []
     reservedate:date
