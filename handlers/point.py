@@ -9,12 +9,12 @@ from models.schema import (
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import EndUser,Transition,Point,PointLogs,Tier
+from models.model import EndUser,Transition,Point,PointLogs,Tier,TierRule,Money
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
 from modules.utils import pagination
-from sqlalchemy import desc,func
+from sqlalchemy import desc,func,and_
 router = APIRouter()
 auth_handler = AuthToken()
 
@@ -83,6 +83,24 @@ async def share_point_byphone(
         raise HTTPException(status_code=400, detail="User Not Found.")
     if current_user["id"] == receive.id:
         raise HTTPException(status_code=400, detail="You Can't Share Yourself.")
+    try:
+        sender_money = db.query(func.sum(Money.amount)).filter(Money.user_id == str(current_user["id"])).scalar()
+        sender_unit = sender_money if sender_money is not None else 0
+        sender_tier = db.query(TierRule).filter(and_(TierRule.lower <= sender_unit, TierRule.higher >= sender_unit)).first()
+        tier1 = sender_tier.name if sender_tier else "Unavaliable"
+        logger.info(f"Sender Tier : ${tier1}")
+
+        receiver_money = db.query(func.sum(Money.amount)).filter(Money.user_id == str(receive.id)).scalar()
+        receiver_unit = receiver_money if receiver_money is not None else 0
+        receiver_tier = db.query(TierRule).filter(and_(TierRule.lower <= receiver_unit, TierRule.higher >= receiver_unit)).first()
+        tier2 = receiver_tier.name if receiver_tier else "Unavaliable"
+        logger.info(f"Receiver Tier : ${tier2}")
+        if tier1!=tier2:
+            logger.info(f"{tier1} can't send to {tier2}")
+            raise HTTPException(status_code=400, detail=f"${tier1} can't send to ${tier2}")
+    except  Exception  as e:
+        print(e)
+        logger.info("Tier Check Failed")
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
