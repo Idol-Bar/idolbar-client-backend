@@ -52,3 +52,4 @@ async def get_app_faq(
     meta_data =  pagination(page,per_page,count)
     faq = db.query(FaqModel).order_by(desc(FaqModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return jsonable_encoder({"faq":faq,"meta":meta_data})
+

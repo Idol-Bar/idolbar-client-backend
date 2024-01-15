@@ -95,12 +95,12 @@ async def share_point_byphone(
         receiver_tier = db.query(TierRule).filter(and_(TierRule.lower <= receiver_unit, TierRule.higher >= receiver_unit)).first()
         tier2 = receiver_tier.name if receiver_tier else "Unavaliable"
         logger.info(f"Receiver Tier : ${tier2}")
-        if tier1!=tier2:
-            logger.info(f"{tier1} can't send to {tier2}")
-            raise HTTPException(status_code=400, detail=f"${tier1} can't send to ${tier2}")
     except  Exception  as e:
         print(e)
         logger.info("Tier Check Failed")
+    if tier1!=tier2:
+        logger.info(f"{tier1} can't send to {tier2}")
+        raise HTTPException(status_code=400, detail=f"${tier1} can't send to ${tier2}")
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
