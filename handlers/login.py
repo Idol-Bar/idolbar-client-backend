@@ -74,8 +74,8 @@ def login(user_details: PhoneLoginSchema, db: Session = Depends(get_db)):
 async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends(get_db)):
     logger.info(user_details)
     user = db.query(User).filter(User.phoneno == user_details.phone).first()
-    #code = str(random.randint(100000, 999999))
-    code = "123456"
+    code = str(random.randint(100000, 999999))
+    #code = "123456"
     logger.info(f'Code: {code}')
     if user is None:
         tier = Tier(name="gold")
@@ -93,8 +93,8 @@ async def  sms_register(user_details: PhoneRegisterSchema, db: Session = Depends
         db.commit()
         db.refresh(user)
     logger.info("Sending SMS")
-    #result = await send_sms(phone=user_details.phone,message=code)
-    #logger.info(result)
+    result = await send_sms(phone=user_details.phone,message=code)
+    logger.info(result)
     return {"detail": "User registered. Six-digit verification code sent"}
         
     
