@@ -81,8 +81,12 @@ def get_reservation_byid(id: int, db: Session = Depends(get_db)):
     return {"reservation":reservation}
 
 @router.delete("/reservations/{id}", tags=["reservation"])
-async def delete_reservation(id: int, db: Session = Depends(get_db)):
+async def delete_reservation(id: int, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
     reservations = db.get(Reservation, id)
+    if reservations.userId != current_user["id"]:
+        raise HTTPException(status_code=404, detail="Your don't have permission.")
+    logger.info(reservations.userId)
+    logger.info(current_user["id"])
     db.delete(reservations)
     db.commit()
     return {"message": "User has been deleted succesfully"}
