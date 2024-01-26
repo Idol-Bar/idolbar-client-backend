@@ -207,6 +207,7 @@ class CartItem(Base):
     food = relationship('FoodModel')
     cart_id = Column(Integer, ForeignKey('carts.id'))
     cart = relationship('Cart', back_populates='cart_items')
+    description = Column(String, nullable=True)
 
 class Order(Base):
     __tablename__ = 'orders'
@@ -234,6 +235,7 @@ class OrderItem(Base):
     food = relationship('FoodModel')
     order_id = Column(Integer, ForeignKey('orders.id'))
     order = relationship('Order', back_populates='order_items')
+    description = Column(String, nullable=True)
 
    
 class NotiModel(Base):
