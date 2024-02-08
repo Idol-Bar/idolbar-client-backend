@@ -20,7 +20,7 @@ auth_handler = AuthToken()
 @router.get("/posts", tags=["post"])#, response_model=Dict[str,List[GetAppPostSchema]])
 async def get_post(
 page: int = 1 , per_page: int=10,
-    category:str=None,
+    category:str=None,shop:str="shop1",
     db: Session = Depends(get_db)
 ):   
     if category:
@@ -31,9 +31,9 @@ page: int = 1 , per_page: int=10,
         return {"post":post_data,"meta":meta_data}
     else:
         logger.info("All Post")
-        count = db.query(PostModel).count()
+        count = db.query(PostModel).filter(PostModel.shop==shop).count()
         meta_data =  pagination(page,per_page,count)
-        post_data = db.query(PostModel).order_by(desc(PostModel.publishdate)).limit(per_page).offset((page - 1) * per_page).all()
+        post_data = db.query(PostModel).filter(PostModel.shop==shop).order_by(desc(PostModel.publishdate)).limit(per_page).offset((page - 1) * per_page).all()
         return {"post":post_data,"meta":meta_data}
 
 

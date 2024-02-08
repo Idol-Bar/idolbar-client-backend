@@ -20,12 +20,12 @@ auth_handler = AuthToken()
 
 @router.get("/events", tags=["events"])#, response_model=Dict[str,List[GetBannerSchema]])
 async def get_events(
-    page: int = 1 , per_page: int=8,
+    page: int = 1 , per_page: int=8,shop:str="shop1",
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
-    count = db.query(EventModel).count()
+    count = db.query(EventModel).filter(EventModel.shop==shop).count()
     meta_data =  pagination(page,per_page,count)
-    events = db.query(EventModel).order_by(desc(EventModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
+    events = db.query(EventModel).filter(EventModel.shop==shop).order_by(desc(EventModel.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"event":events,"meta":meta_data}
 
 @router.get("/comingEvents/{id}", tags=["events"], response_model=Dict[str,EventSchema])
