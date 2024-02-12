@@ -413,3 +413,24 @@ class PaymentSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class CreateAppReviewSchema(OrmBase):
+    id: Optional[int]
+    title: str
+    description: str
+    status:Optional[str]="PENDING"
+    postImage: Optional[List] = []
+    owner:Optional[str]="USER"
+    class Config:
+        orm_mode = True
+
+class CreateAppReviewSchemaRequest(BaseModel):
+    review: CreateAppReviewSchema
+
+class GetReviewSchema(OrmBase):
+    id: int
+    title: str
+    description: str
+    postImage: Optional[List] = []
+    createdate: datetime
+    class Config:
+        orm_mode = True

@@ -276,3 +276,13 @@ class PaymentModel(Base):
     postImage = Column(ARRAY(JSON), nullable=True)
     createdate = Column(DateTime, default=datetime.datetime.now)
 
+
+class ReviewModel(Base):
+    __tablename__ = "review"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String,nullable=False)
+    description = Column(String,nullable=False)
+    status = Column(String,nullable=False)
+    postImage = Column(ARRAY(JSON), nullable=True)
+    owner = Column(String,nullable=False)
+    createdate = Column(DateTime, default=datetime.datetime.now)

@@ -21,6 +21,27 @@ router = APIRouter()
 auth_handler = AuthToken()
 
 
+@router.get("/parcels", tags=["order"])#, response_model=Dict[str,List[GetOrder]])
+async def get_parcels(
+    page: int = 1 , per_page: int=10,
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    count = db.query(Order).filter(Order.user_id==current_user["id"],Order.tables=="parcel").count()
+    meta_data =  pagination(page,per_page,count)
+    order_data = db.query(Order).filter(Order.user_id==current_user["id"],Order.tables=="parcel").order_by(desc(Order.createdate)).limit(per_page).offset((page - 1) * per_page).all()
+    return {"parcel":order_data,"meta":meta_data}
+
+
+@router.get("/parcelOrders", tags=["order"], response_model=Dict[str,List[GetReservedOrder]])#, response_model=Dict[str,List[GetOrder]])
+async def get_parcel_orders(
+   reserveid:int=None,
+    db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    order_data = db.query(Order).filter(Order.user_id==current_user["id"], Order.id==reserveid).order_by(desc(Order.createdate)).all()
+    return {"parcel-order":order_data}
+
+
+
 @router.get("/orders", tags=["order"],response_model=GetOrderSchemaWithMeta)#, response_model=Dict[str,List[GetOrder]])
 async def get_orders(
     page: int = 1 , per_page: int=10,
@@ -74,3 +95,4 @@ def get_order_byid(id: int, db: Session = Depends(get_db), current_user: Current
     if not order:
         raise HTTPException(status_code=404, detail="Order ID not found.")
     return {"order":order}
+
