@@ -53,8 +53,25 @@ async def get_reservelist(
     print(current_user)
     count = db.query(Reservation).filter(Reservation.userId==current_user["id"]).count()
     meta_data =  pagination(page,per_page,count)
-    reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(Reservation.userId==current_user["id"]).order_by(desc(Reservation.createdate)).all()
+    reservation = db.query(Reservation).join(Tables, Reservation.tables).filter(Reservation.userId==current_user["id"],Reservation.active==True).order_by(desc(Reservation.createdate)).all()
     return {"reserveList":reservation,"meta":meta_data}
+
+@router.get("/reserveLists/{id}", tags=["reservation"], response_model=Dict[str,ReserveSchema])
+def get_reserve_byid(id: int, db: Session = Depends(get_db)):
+    reservedata = db.get(Reservation, id)
+    if not reservedata:
+        raise HTTPException(status_code=404, detail="Reservation ID not found.")
+    return {"reserveList":reservedata}
+
+@router.delete("/reserveLists/{_id}", tags=["reservation"])
+async def delete_food(_id: int, db: Session = Depends(get_db)):
+    db_reserve = db.get(Reservation, _id)
+    if not db_reserve:
+        raise HTTPException(status_code=404, detail="Reservation ID not found.")
+    db_reserve.active = False
+    db.commit()
+    db.refresh(db_reserve)
+    return {"message": "Reservation has been deleted succesfully"}
 
 
 @router.post("/reservations", tags=["reservation"])#, response_model=Dict[str,ReserveSchema])

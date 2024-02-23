@@ -98,9 +98,9 @@ async def share_point_byphone(
     except  Exception  as e:
         print(e)
         logger.info("Tier Check Failed")
-    if tier1!=tier2:
-        logger.info(f"{tier1} can't send to {tier2}")
-        raise HTTPException(status_code=400, detail=f"${tier1} can't send to ${tier2}")
+    #if tier1!=tier2:
+    #    logger.info(f"{tier1} can't send to {tier2}")
+    #    raise HTTPException(status_code=400, detail=f"${tier1} can't send to ${tier2}")
     owner_points_count = db.query(Point).filter(Point.owner_id == current_user["id"]).all()
     logger.info(len(owner_points_count))
     if len(owner_points_count)>int(point_info.unit):
@@ -116,7 +116,7 @@ async def share_point_byphone(
                         phoneno=owner.phoneno,status="Share",fromUser=owner.username,toUser=receive.username)
         db.add(pay_point_log)
         db.commit()
-        return  {"status":f"You send  {point_info.unit} points to {receive.username}","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
+        return  {"point":point_info.unit,"phone":point_info.phoneno,"status":f"You send  {point_info.unit} points to {receive.username}","wallet":f"{len(owner_points_count)} points","pay":f"{point_info.unit} points","You Left:":f"{len(owner_points_count)-point_info.unit} points"}
     return HTTPException(status_code=400, detail="Not Enought Amount")
 
     
