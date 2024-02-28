@@ -20,6 +20,15 @@ from firebase_admin import messaging
 router = APIRouter()
 auth_handler = AuthToken()
 
+import psycopg2
+from configs.setting import Settings
+
+settings = Settings()
+
+conn = psycopg2.connect(host=settings._dbhost, dbname=settings._dbname, user=settings._dbuser, password=settings._dbpass)
+cursor = conn.cursor()
+conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+
 
 @router.get("/parcels", tags=["order"])#, response_model=Dict[str,List[GetOrder]])
 async def get_parcels(
@@ -28,7 +37,7 @@ async def get_parcels(
 ):
     count = db.query(Order).filter(Order.user_id==current_user["id"],Order.tables=="parcel").count()
     meta_data =  pagination(page,per_page,count)
-    order_data = db.query(Order).filter(Order.user_id==current_user["id"],Order.tables=="parcel").order_by(Order.createdate).limit(per_page).offset((page - 1) * per_page).all()
+    order_data = db.query(Order).filter(Order.user_id==current_user["id"],Order.tables=="parcel").order_by(desc(Order.createdate)).limit(per_page).offset((page - 1) * per_page).all()
     return {"parcel":order_data,"meta":meta_data}
 
 
@@ -71,28 +80,28 @@ async def get_orders(
 
 
 
-@router.post("/orders", tags=["order"])
-async def create_order(
-    request: Request, order: CreateOrderSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
-):
-    data = order.order
-    logger.info(data)
-    cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
-    if not cart:
-        raise HTTPException(status_code=404, detail="Cart not found")
-    logger.info(cart.cart_items)
-    new_order = Order(username=data.username,phone=data.phone,createdate=data.reservedate,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
-    for cart_item in cart.cart_items:
-        logger.info(cart_item)
-        order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
-        new_order.order_items.append(order_item)
-        #db.add(order_item)
-    cart.status = "CLOSED"
-    db.add(new_order)
-    db.add(cart)
-    db.commit()
-    db.refresh(new_order)
-    return {"order":new_order}
+# @router.post("/orders", tags=["order"])
+# async def create_order(
+#     request: Request, order: CreateOrderSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+# ):
+#     data = order.order
+#     logger.info(data)
+#     cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
+#     if not cart:
+#         raise HTTPException(status_code=404, detail="Cart not found")
+#     logger.info(cart.cart_items)
+#     new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
+#     for cart_item in cart.cart_items:
+#         logger.info(cart_item)
+#         order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+#         new_order.order_items.append(order_item)
+#         #db.add(order_item)
+#     cart.status = "CLOSED"
+#     db.add(new_order)
+#     db.add(cart)
+#     db.commit()
+#     db.refresh(new_order)
+#     return {"order":new_order}
 
 @router.get("/orders/{id}", tags=["order"], response_model=Dict[str,GetOrder])
 def get_order_byid(id: int, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):

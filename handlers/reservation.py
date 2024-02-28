@@ -6,11 +6,11 @@ from models.schema import (
     ReserveSchema,
     CreateReserveSchemaRequest,
     TablesSchema,
-    CreateTableSchemaRequest,ReserveSchemaWithMeta,RestableScema
+    CreateTableSchemaRequest,ReserveSchemaWithMeta,RestableScema,CreateOrderSchemaRequest,GetReservedOrder
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import Reservation, Tables
+from models.model import Reservation, Tables,Cart,Order,OrderItem
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
@@ -91,10 +91,13 @@ async def add_reservation(
     db.add(tables)
     db.commit()
     #for eventsource
-    evt_data = json.dumps(parse_obj_as(TablesSchema,tables).dict(), default=str)
-    logger.info(evt_data)
+    #evt_data = json.dumps(parse_obj_as(TablesSchema,tables).dict(), default=str)
+    #logger.info(evt_data)
     #db.execute(text("SELECT pg_notify(:channel, :data)").bindparams(channel="match_updates", data=evt_data))
     #db.commit()
+    order_dict = parse_obj_as(TablesSchema,tables).dict()
+    order_dict["noti"] = "reserve"
+    evt_data = json.dumps(order_dict, default=str)
     cursor.execute(f"NOTIFY match_updates, '{evt_data}';")
     ###
     db.refresh(order)
@@ -125,6 +128,7 @@ async def get_tables(
     db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
     if reservedate and shop:
+        print
         restables = db.query(Tables).filter(func.date(Tables.reservedate)==reservedate,Tables.shop==shop).order_by(desc(Tables.createdate)).all()
         return {"restable":restables}
     elif not reservedate and shop:
@@ -144,3 +148,32 @@ async def add_tables(
     tables = data.dict()
     tables["restable"]["id"] = str(uuid4())
     return {"restable":tables["restable"]}
+
+
+@router.post("/orders", tags=["order"])
+async def create_order(
+    request: Request, order: CreateOrderSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
+):
+    data = order.order
+    logger.info(data)
+    cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
+    if not cart:
+        raise HTTPException(status_code=404, detail="Cart not found")
+    logger.info(cart.cart_items)
+    new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
+    for cart_item in cart.cart_items:
+        logger.info(cart_item)
+        order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+        new_order.order_items.append(order_item)
+        #db.add(order_item)
+    cart.status = "CLOSED"
+    db.add(new_order)
+    db.add(cart)
+    db.commit()
+    db.refresh(new_order)
+    if data.tables=="parcel":
+        order_dict = parse_obj_as(GetReservedOrder,new_order).dict()
+        order_dict["noti"] = "parcel"
+        evt_data = json.dumps(order_dict, default=str)
+        cursor.execute(f"NOTIFY match_updates, '{evt_data}';")
+    return {"order":new_order}

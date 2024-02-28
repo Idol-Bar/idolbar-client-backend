@@ -181,6 +181,7 @@ class ReservationSchema(OrmBase):
 
 class RestableScema(OrmBase):
     name: str
+    shop: str
     reservedate: date
     createdate: datetime
     reservation_id:int
