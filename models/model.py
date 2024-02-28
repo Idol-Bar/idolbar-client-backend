@@ -286,3 +286,13 @@ class ReviewModel(Base):
     postImage = Column(ARRAY(JSON), nullable=True)
     owner = Column(String,nullable=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
+
+class AdminNotiModel(Base):
+    __tablename__ = "notimanager"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    shop = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    status = Column(String, nullable=False)
+    select_id = Column(Integer, nullable=True)
+    createdate = Column(DateTime, default=datetime.datetime.now)

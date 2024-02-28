@@ -157,7 +157,7 @@ class ReserveSchema(OrmBase):
     reservedate: date
     reservetime: time
     description: str
-    status: bool
+    status: str
     active: Optional[bool] = False
     tables: List[TablesSchema]  = []
 
@@ -172,7 +172,7 @@ class ReservationSchema(OrmBase):
     reservedate: date
     reservetime: time
     description: str
-    status: bool
+    status: str
     active: Optional[bool] = False
     tables: List[TablesSchema]  = []
 

@@ -10,7 +10,7 @@ from models.schema import (
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import Reservation, Tables,Cart,Order,OrderItem
+from models.model import Reservation, Tables,Cart,Order,OrderItem,AdminNotiModel
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
@@ -86,7 +86,7 @@ async def add_reservation(
         raise HTTPException(status_code=400, detail="Reservation already registered.")
     tables = Tables(name=data.tables[0],reservedate=data.reservedate,shop=data.shop)
     order = Reservation(userId=current_user["id"],username=data.username, phoneno=data.phoneno,reservedate=data.reservedate,reservetime=data.reservetime,
-                    description=data.description,status=data.status,active=True,tables=[tables])
+                    description=data.description,status="Pending",active=True,tables=[tables])
     db.add(order)
     db.add(tables)
     db.commit()
@@ -95,6 +95,12 @@ async def add_reservation(
     #logger.info(evt_data)
     #db.execute(text("SELECT pg_notify(:channel, :data)").bindparams(channel="match_updates", data=evt_data))
     #db.commit()
+    select_id = order.id
+    notification = AdminNotiModel(shop=data.shop,title="New Table Request",description=f"{data.tables[0]} Table Booked",status="reserve",select_id=select_id)
+    db.add(notification)
+    db.commit()
+    db.refresh(notification)
+
     order_dict = parse_obj_as(TablesSchema,tables).dict()
     order_dict["noti"] = "reserve"
     evt_data = json.dumps(order_dict, default=str)
@@ -171,7 +177,14 @@ async def create_order(
     db.add(cart)
     db.commit()
     db.refresh(new_order)
+    print("Order ID")
+    select_id = new_order.id
     if data.tables=="parcel":
+        notification = AdminNotiModel(shop=data.shop,title="New Parcel Request",description=f"{data.username}({data.phone}) parcel {len(cart.cart_items)} items",status="parcel",select_id=select_id)
+        db.add(notification)
+        db.commit()
+        db.refresh(notification)
+
         order_dict = parse_obj_as(GetReservedOrder,new_order).dict()
         order_dict["noti"] = "parcel"
         evt_data = json.dumps(order_dict, default=str)
