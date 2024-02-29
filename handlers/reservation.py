@@ -145,6 +145,12 @@ async def get_tables(
         restables = db.query(Tables).filter(func.date(Tables.reservedate)==date.today()).order_by(desc(Tables.createdate)).all()
         return {"restable":restables}
 
+@router.get("/restables/{id}", tags=["reservation"], response_model=Dict[str,RestableScema])
+def get_tables_byid(id: int, db: Session = Depends(get_db)):
+    restable = db.get(Tables, id)
+    if not restable:
+        raise HTTPException(status_code=404, detail="Table ID not found.")
+    return {"restable":restable}
 
 @router.post("/restables", tags=["reservation"])#, response_model=Dict[str,ReserveSchema])
 async def add_tables(
@@ -160,23 +166,42 @@ async def add_tables(
 async def create_order(
     request: Request, order: CreateOrderSchemaRequest, db: Session = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)
 ):
+    
     data = order.order
+    reservation = db.get(Reservation, data.reservation_id)
     logger.info(data)
     cart = db.query(Cart).filter(Cart.id==data.cart_id,Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
         raise HTTPException(status_code=404, detail="Cart not found")
     logger.info(cart.cart_items)
-    new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
-    for cart_item in cart.cart_items:
-        logger.info(cart_item)
-        order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
-        new_order.order_items.append(order_item)
-        #db.add(order_item)
-    cart.status = "CLOSED"
-    db.add(new_order)
-    db.add(cart)
-    db.commit()
-    db.refresh(new_order)
+    if reservation:
+        new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop,reservation_id=reservation.id)
+        reservation.order = new_order
+        for cart_item in cart.cart_items:
+            logger.info(cart_item)
+            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+            new_order.order_items.append(order_item)
+            #db.add(order_item)
+        cart.status = "CLOSED"
+        db.add(new_order)
+        db.add(cart)
+        db.commit()
+        db.refresh(new_order)
+        db.refresh(reservation)
+    else:
+        new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
+        for cart_item in cart.cart_items:
+            logger.info(cart_item)
+            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+            new_order.order_items.append(order_item)
+            #db.add(order_item)
+        cart.status = "CLOSED"
+        db.add(new_order)
+        db.add(cart)
+        db.commit()
+        db.refresh(new_order)
+        
+
     print("Order ID")
     select_id = new_order.id
     if data.tables=="parcel":

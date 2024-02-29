@@ -132,82 +132,7 @@ class SharePointWithPhonSchema(BaseModel):
 
     class Config:
         orm_mode = True
-### Reservation
-class CreateTableSchema(OrmBase):
-    id: Optional[int]
-    name: str
-    reservedate: date
 
-class CreateTableSchemaRequest(BaseModel):
-    restable: CreateTableSchema
-
-class TablesSchema(OrmBase):
-    name: str
-    shop:Optional[str] = ""
-    reservedate: date
-    createdate: datetime
-    reservation_id:int
-
-
-
-class ReserveSchema(OrmBase):
-    username: str
-    phoneno: str
-    createdate: datetime
-    reservedate: date
-    reservetime: time
-    description: str
-    status: str
-    active: Optional[bool] = False
-    tables: List[TablesSchema]  = []
-
-    class Config:
-        orm_mode = True
-
-class ReservationSchema(OrmBase):
-    userId:int
-    username: str
-    phoneno: str
-    createdate: datetime
-    reservedate: date
-    reservetime: time
-    description: str
-    status: str
-    active: Optional[bool] = False
-    tables: List[TablesSchema]  = []
-
-    class Config:
-        orm_mode = True
-
-class RestableScema(OrmBase):
-    name: str
-    shop: str
-    reservedate: date
-    createdate: datetime
-    reservation_id:int
-    reservation:ReservationSchema
-
-class ReserveSchemaWithMeta(BaseModel):
-    reserveList: List[ReserveSchema] = []
-    meta : MetaSchema
-
-class CreateReserveSchema(OrmBase):
-    id: Optional[int]
-    username: str
-    phoneno: str
-    shop: str
-    reservedate: date
-    reservetime: time
-    description: str
-    status: Optional[bool] = True
-    active: Optional[bool] = True
-    tables: List
-
-    class Config:
-        orm_mode = True
-
-class CreateReserveSchemaRequest(BaseModel):
-    reservation: CreateReserveSchema
 ### Reservation
 """
 class TablesSchema(OrmBase):
@@ -330,6 +255,7 @@ class CartList(BaseModel):
 
 ##
 class CreateOrder(BaseModel):
+    reservation_id:Optional[int]
     cart_id: int
     payment: str
     description: Optional[str]= ""
@@ -435,3 +361,85 @@ class GetReviewSchema(OrmBase):
     createdate: datetime
     class Config:
         orm_mode = True
+
+
+### Reservation
+class CreateTableSchema(OrmBase):
+    id: Optional[int]
+    name: str
+    reservedate: date
+
+class CreateTableSchemaRequest(BaseModel):
+    restable: CreateTableSchema
+
+class TablesSchema(OrmBase):
+    name: str
+    shop:Optional[str] = ""
+    reservedate: date
+    createdate: datetime
+    reservation_id:int
+
+
+
+class ReserveSchema(OrmBase):
+    username: str
+    phoneno: str
+    createdate: datetime
+    reservedate: date
+    reservetime: time
+    description: str
+    status: str
+    active: Optional[bool] = False
+    tables: List[TablesSchema]  = []
+    orders: Optional[List[GetOrder]] = None
+    class Config:
+        orm_mode = True
+
+class EmptyReservationResponse(BaseModel):
+    reservation: Optional[ReserveSchema]
+
+
+class ReservationSchema(OrmBase):
+    userId:Optional[int] = 0
+    username: str
+    phoneno: str
+    createdate: datetime
+    reservedate: date
+    reservetime: time
+    description: str
+    status: str
+    active: Optional[bool] = False
+    tables: List[TablesSchema]  = []
+
+    class Config:
+        orm_mode = True
+
+class RestableScema(OrmBase):
+    name: str
+    shop: str
+    reservedate: date
+    createdate: datetime
+    reservation_id:int
+    reservation:ReservationSchema
+
+class ReserveSchemaWithMeta(BaseModel):
+    reserveList: List[ReserveSchema] = []
+    meta : MetaSchema
+
+class CreateReserveSchema(OrmBase):
+    id: Optional[int]
+    username: str
+    phoneno: str
+    shop: str
+    reservedate: date
+    reservetime: time
+    description: str
+    status: Optional[bool] = True
+    active: Optional[bool] = True
+    tables: List
+
+    class Config:
+        orm_mode = True
+
+class CreateReserveSchemaRequest(BaseModel):
+    reservation: CreateReserveSchema

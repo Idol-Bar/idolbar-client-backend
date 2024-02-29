@@ -149,6 +149,7 @@ class Reservation(Base):
     active = Column(Boolean, unique=False, default=True)
     userId = Column(Integer, nullable=True)
     tables = relationship('Tables', back_populates='reservation', cascade='all, delete-orphan')
+    orders = relationship('Order', back_populates='reservation', cascade='all, delete-orphan')
 
 class Tables(Base):
     __tablename__ = 'tables'
@@ -225,6 +226,8 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("enduser.id"))
     enduser = relationship("EndUser")
     order_items = relationship('OrderItem', back_populates='order')
+    reservation_id = Column(Integer, ForeignKey('reservation.id'))  # Define a foreign key
+    reservation = relationship('Reservation', back_populates='orders')
 
 class OrderItem(Base):
     __tablename__ = 'order_items'
@@ -295,4 +298,5 @@ class AdminNotiModel(Base):
     description = Column(String, nullable=False)
     status = Column(String, nullable=False)
     select_id = Column(Integer, nullable=True)
+    read = Column(Boolean,default=False)
     createdate = Column(DateTime, default=datetime.datetime.now)
