@@ -192,7 +192,7 @@ async def create_order(
         new_order = Order(username=data.username,phone=data.phone,tables=data.tables,reservedate=data.reservedate,payment=data.payment,status="Pending",postImage=data.postImage,description=data.description,user_id=current_user["id"],shop=data.shop)
         for cart_item in cart.cart_items:
             logger.info(cart_item)
-            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food,description=cart_item.description)
             new_order.order_items.append(order_item)
             #db.add(order_item)
         cart.status = "CLOSED"
