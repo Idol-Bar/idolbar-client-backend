@@ -245,6 +245,15 @@ class AddToCart(BaseModel):
 class AddToCartSchemaRequest(BaseModel):
     cart: AddToCart
 
+class DescCart(BaseModel):
+    description: str
+
+    class Config:
+        orm_mode = True
+
+class UpdateCartItemDesc(BaseModel):
+    cart: DescCart
+
 class CartList(BaseModel):
     price:int
     quantity:int

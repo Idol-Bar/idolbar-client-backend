@@ -4,7 +4,7 @@ from fastapi.logger import logger
 from models.schema import (
     CurrentUser,
     AddToCart,
-    AddToCartSchemaRequest,
+    AddToCartSchemaRequest,UpdateCartItemDesc
 )
 from typing import List, Dict
 from .database import get_db
@@ -64,6 +64,18 @@ def get_cart_byid(id: int, db: Session = Depends(get_db)):
     cartitem = db.get(CartItem, id)
     if not cartitem:
         raise HTTPException(status_code=404, detail="Cart ID not found.")
+    return {"cart":cartitem}
+
+@router.put("/carts/{_id}", tags=["cart"])
+async def update_cart(
+    _id: int, data: UpdateCartItemDesc,db: Session = Depends(get_db)
+):
+    cartitem = db.get(CartItem, _id)
+    if not cartitem:
+        raise HTTPException(status_code=404, detail="Cart ID not found.")
+    cartitem.description =  data.cart.description
+    db.commit()
+    db.refresh(cartitem)
     return {"cart":cartitem}
 
 
