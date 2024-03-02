@@ -212,6 +212,10 @@ async def create_order(
 
         order_dict = parse_obj_as(GetReservedOrder,new_order).dict()
         order_dict["noti"] = "parcel"
+        order_dict["title"] = f"{data.username}({data.phone})"
+        order_dict["item"] = f"parcel {len(cart.cart_items)} items"
+        order_dict["reservedate"] =order_dict["createdate"].strftime('%Y-%m-%d %H:%M')
+     
         evt_data = json.dumps(order_dict, default=str)
         cursor.execute(f"NOTIFY match_updates, '{evt_data}';")
     return {"order":new_order}
