@@ -179,7 +179,7 @@ async def create_order(
         reservation.order = new_order
         for cart_item in cart.cart_items:
             logger.info(cart_item)
-            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food)
+            order_item = OrderItem(price=cart_item.food.price,quantity=cart_item.quantity,food=cart_item.food,description=cart_item.description)
             new_order.order_items.append(order_item)
             #db.add(order_item)
         cart.status = "CLOSED"

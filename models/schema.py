@@ -289,6 +289,7 @@ class OrderItemSchema(BaseModel):
     food_id: Optional[int]=0
     quantity: Optional[int]=0
     food: GetFoodSchema
+    description: Optional[str] = ""
 
     class Config:
         orm_mode = True
