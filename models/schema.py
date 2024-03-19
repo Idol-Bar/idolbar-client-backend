@@ -238,7 +238,7 @@ class AddToCart(BaseModel):
     quantity: int
     reservedate: date
     tableId:str
-
+    cartype: Optional[str] = ""
     class Config:
         orm_mode = True
 

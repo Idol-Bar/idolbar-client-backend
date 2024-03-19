@@ -8,7 +8,7 @@ from models.schema import (
 )
 from typing import List, Dict
 from .database import get_db
-from models.model import Cart,CartItem,FoodModel,EndUser
+from models.model import Cart,CartItem,FoodModel,EndUser,Tables
 from sqlalchemy.orm import Session
 from modules.dependency import get_current_user
 from modules.token import AuthToken
@@ -43,11 +43,14 @@ async def add_cart(
     data = item.cart
     user = db.query(EndUser).get(current_user["id"])
     food = db.query(FoodModel).get(data.food_id)
+    restable = db.get(Tables, data.tableId)
+    reserve_date = restable.reservation.reservedate
     if not user or not food:
             raise HTTPException(status_code=404, detail="Customer or Product not found")
     cart = db.query(Cart).filter(Cart.user_id == current_user["id"], Cart.status == "OPEN").first()
     if not cart:
-        cart = Cart(user_id=user.id,status="OPEN",reservedate=item.cart.reservedate,tables=item.cart.tableId)
+        dynamic_date = reserve_date if data.cartype=="reserve" else item.cart.reservedate 
+        cart = Cart(user_id=user.id,status="OPEN",reservedate=dynamic_date,tables=item.cart.tableId)
         db.add(cart)
         db.commit()
     cart_item = db.query(CartItem).filter(CartItem.cart_id == cart.id, CartItem.food_id == data.food_id).first()
